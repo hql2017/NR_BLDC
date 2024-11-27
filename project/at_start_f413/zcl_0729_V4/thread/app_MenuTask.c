@@ -3364,7 +3364,7 @@ void vAppMenuManageTask( void * pvParameters )
 					}		
 					else
 					{		
-            			if(rec_Signal==add_button_press_signal||rec_Signal==sub_button_press_signal)	
+            if(rec_Signal==add_button_press_signal||rec_Signal==sub_button_press_signal)	
 						{
 							if(submenuPageNum==SETTING_FOR)
 							{

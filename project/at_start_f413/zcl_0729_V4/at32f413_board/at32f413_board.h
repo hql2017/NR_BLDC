@@ -47,7 +47,7 @@ extern "C" {
 #define DEBUG_RTT
 #include "SEGGER_RTT.h"
 #endif 
-#ifndef BLE_FUN
+#ifdef BLE_FUN
 #define BLE_FUN
 #include "BLE_2340C2.h"
 #endif 
