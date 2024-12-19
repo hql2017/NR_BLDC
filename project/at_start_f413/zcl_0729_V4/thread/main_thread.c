@@ -892,8 +892,8 @@ void vApexGC_Task( void * pvParameters )
 			{				
 				if(sys_param_un.device_param.empty_rate<sys_param_un.device_param.gc_ref_rate+180)
 				{				
-					sys_param_un.device_param.empty_rate=720;//1000;
-					sys_param_un.device_param.gc_ref_rate=480;//680;			
+					sys_param_un.device_param.empty_rate=1000;//1000;
+					//sys_param_un.device_param.gc_ref_rate=480;//680;			
 				}
 			}
 			gc_list_init((int)sys_param_un.device_param.empty_rate,(int)(sys_param_un.device_param.gc_ref_rate-10));	//半格		
@@ -958,7 +958,7 @@ void vApexGC_Task( void * pvParameters )
 			{				
 				sys_param_un.device_param.apex_tine_400Value = GC_400_AdcValue;
 				sys_param_un.device_param.empty_rate=rec_gc_rate;//保存参考值
-				if(sys_param_un.device_param.empty_rate<sys_param_un.device_param.gc_ref_rate+150||sys_param_un.device_param.empty_rate>1000) sys_param_un.device_param.empty_rate=720 ;//1000;//使用默认值
+				if(sys_param_un.device_param.empty_rate<sys_param_un.device_param.gc_ref_rate+150) sys_param_un.device_param.empty_rate=1000 ;//1000;//使用默认值
 				gc_list_init((int)sys_param_un.device_param.empty_rate,(int)(sys_param_un.device_param.gc_ref_rate-10));
 			}				
 		//too low ,error value 不更新
@@ -971,7 +971,7 @@ void vApexGC_Task( void * pvParameters )
 		}
 		else 
 		{	
-        	if(get_gc_state() == RESET)
+       if(get_gc_state() == RESET)
 			{
 				if(sys_param_un.device_param.apexFunctionLoad==0)
 				{//beep	            						

@@ -5,10 +5,7 @@
 #include "gpio_port.h"
 #include "oled_port.h"
 #include "para_list.h"
-
 #include "at32f413_board.h"
-
-
 	#include "FreeRTOS.h"
 	#include "task.h"
 	#include "queue.h"
@@ -25,8 +22,7 @@ extern QueueHandle_t  xQueueBeepMode;//beep
 extern QueueHandle_t  xQueueBatValue;//batValue
 extern TaskHandle_t  beepTemporaryTask_Handle;
 
-
-#define BAT_STATUS_CHARGING  			0x10//insert  charging
+#define BAT_STATUS_CHARGING  	  0x10//insert  charging
 #define BAT_STATUS_CHARGING_FULL  0x11//insert charging full
 #define BAT_STATUS_CHARGING_EXIT  0x00//exit or err
 
@@ -143,7 +139,7 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 			{				
 				#ifdef LED_INDICATE_ENABLE				
 				LedFunctionSet(LED_Y ,LED_OFF,LED_T_HIGH_PRIORITY,LED_OFF); 	//exit charge
-				LedFunctionSet(LED_B ,LED_OFF,LED_T_HIGH_PRIORITY,LED_OFF);
+				LedFunctionSet(LED_B ,LED_KEEP_ON,LED_T_HIGH_PRIORITY,LED_OFF);
 				#endif	
 				sendBuff=MENU_HOME_PAGE;	
 				xQueueSend(xQueueMenuValue, &sendBuff, 0);
@@ -168,7 +164,7 @@ void vAppPeriodicTask( void * pvParameters )
 { 	
 	void *pMalloc=NULL;
 	static unsigned int countPeriodicTimeMs=0;//		
-#ifdef LED_INDICATE_ENABLE	
+	#ifdef LED_INDICATE_ENABLE	
 	if(get_insert_state()==SET)
 	{	//insert//charge
 		LedFunctionSet(LED_B ,LED_OFF,LED_T_HIGH_PRIORITY,LED_KEEP_ON);

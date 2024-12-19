@@ -4,12 +4,6 @@
             "path": "."
         }
     ],
-    "settings": {
-        "files.associations": {
-            "para_list.h": "c",
-            "oled_port.h": "c",
-            "oledfont.h": "c"
-        }
-    },
+    "settings": {},
     "extensions": {}
 }
