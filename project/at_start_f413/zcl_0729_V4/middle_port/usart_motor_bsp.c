@@ -6,7 +6,10 @@
 #include "at32f413_board.h"
 
 #include "usart_motor_bsp.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"	
  
 
 #define MAX_U_MOTOR_FIFO_LEN 64
@@ -131,7 +134,10 @@ void u_motor_send_data(u8 *buf, u16 len)
   uart_motor_tx_buf[1]=0xAA;
 	uart_motor_tx_buf[2]=len+5;	
 	uart_motor_tx_buf[3]=id;
+
+ 
 	if(len!=0) memcpy(&uart_motor_tx_buf[4],buf,len);	
+  
 	uart_motor_tx_buf[len+4]=TX_CheckSum(uart_motor_tx_buf, len+4);
 	
 	u_motor_send_data(uart_motor_tx_buf, len+5);
@@ -153,14 +159,27 @@ void app_u_motor_get_sta_req(void )
 //位置设置
 void app_u_motor_position_set(un_motor_positon_set* p_set)
 {		
-	AppUsartMotorTransmit(U_MOTOR_ID_POSITION_MODE_SET,&(p_set->data[4]),13);		
+  
+	AppUsartMotorTransmit(U_MOTOR_ID_POSITION_MODE,&(p_set->data[4]),13);		
 }
 //
 void app_u_motor_angle_cali(void )
 {		
 	unsigned char sendBuff=0;
+
+  AppUsartMotorTransmit(U_MOTOR_ID_PREPARE_MODE,&sendBuff,0);//静默
+  vTaskDelay(10); 
 	AppUsartMotorTransmit(U_MOTOR_ID_ENCODE_CALI,&sendBuff,0);
-	//osDelay(2000);
+}
+void app_u_motor_angle_cali_next(void )
+{
+  unsigned char sendBuff=0;
+  sendBuff=0x06;
+  AppUsartMotorTransmit(0x08,&sendBuff,1);//转速比6：1
+  vTaskDelay(10);
+  AppUsartMotorTransmit(0x1A,&sendBuff,0);//电角度自动微调
+  vTaskDelay(100);
+  AppUsartMotorTransmit(U_MOTOR_ID_GENE_WORK_ENABLE,&sendBuff,0);//回复正常模式
 }
 void app_u_motor_run_enable(void )
 {		//id 0x02	
@@ -175,10 +194,21 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
 {	
 	if(s_t_mode==0)	//速度模式
 	{
-		u_f_uni.f_value=spd*1.0;	
-		AppUsartMotorTransmit(U_MOTOR_ID_SPEED_MODE_SET,u_f_uni.data,sizeof(float));
+    u_pos_set.p_set.mode=0;
+		u_f_uni.f_value=spd*1.0;    
+		AppUsartMotorTransmit(U_MOTOR_ID_SPEED_MODE,u_f_uni.data,sizeof(float));
 	}
-	else//扭矩模式
+  else if(s_t_mode==2)//往复运动
+  {
+    //位置设置  
+    SEGGER_RTT_WriteString(0, "psi start\r\n");
+    u_pos_set.p_set.mode =1;
+    u_pos_set.p_set.position_ref1=150;
+    u_pos_set.p_set.position_ref2=-150;
+    u_pos_set.p_set.freq=2;                                  
+    app_u_motor_position_set(&u_pos_set);
+  }
+	else //扭矩模式
 	{
 		un_set_speed_tq_limit_struct u_p_str;
 		u_p_str.tq_set.iq_ref=torqueI;
@@ -188,28 +218,55 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
 }
 //软件停止
 void app_u_motor_stop(void )
-{	//iD=0x12	
-	AppUsartMotorTransmit(U_MOTOR_ID_STANSBY_MODE,uart_motor_tx_buf,0);			
+{	
+  //iD=0x12	
+  unsigned char sendBuff=0;  
+  AppUsartMotorTransmit(U_MOTOR_ID_STANSBY_MODE,&sendBuff,0);
 }
 //软件复位
 void app_u_motor_reset(void )
 {	
-    AppUsartMotorTransmit(U_MOTOR_ID_SOFT_RESET_REQ,uart_motor_tx_buf,0);	
+  unsigned char sendBuff=0;
+    AppUsartMotorTransmit(U_MOTOR_ID_SOFT_RESET_REQ,&sendBuff,0);	
 }
 //�������ݴ���
 void app_u_motor_handle(unsigned char *data,unsigned char packLen )
 {				
-	unsigned char codeId;
-	codeId=data[2]&U_MOTOR_CODE_ID_MASK;		
+	unsigned char codeId,dataLen=0;
+  unsigned char i=0;
+  if(data[2]>5)  dataLen=data[2]-5;
+	codeId=data[3]&U_MOTOR_CODE_ID_MASK;
+  #if 0
+  SEGGER_RTT_WriteString(0, "u_pack\r\n");
+  for( i=0;i<packLen;i++)
+  {
+    SEGGER_RTT_printf(0, " %02x\r\n",data[i]);
+  }
+  SEGGER_RTT_WriteString(0, " u_pack_len=\r\n",packLen);
+  #endif		
 	if(codeId==U_MOTOR_ID_STATUS_INFO_REQ)
 	{
-    SEGGER_RTT_WriteString(0, "sta\r\n");	
-		if((data[2]&0x01)!=0)
-		{
-			memcpy(u_motor_sta_replay.data,&data[3],sizeof(get_status_reply_struct));	
-        			
+		if((data[3]&0x01)!=0)
+		{     
+      //  SEGGER_RTT_WriteString(0, "sta r\r\n");
+			memcpy(u_motor_sta_replay.data,data,sizeof(get_status_reply_struct));	      
+
 		}			
-	}		
+	}	
+  else if(codeId==U_MOTOR_ID_SPEED_MODE)
+  {
+    if((data[3]&0x01)!=0)
+		{         
+    // SEGGER_RTT_printf(0, "spd l=%d\r\n",packLen);
+    }
+  }	
+  else if(codeId==U_MOTOR_ID_POSITION_MODE)
+  {
+    if((data[3]&0x01)!=0)
+		{ 
+     //SEGGER_RTT_printf(0, "posi l=%d\r\n",packLen);
+    }
+  }	
 }  
 
 //-----����У��-----------------------
@@ -258,8 +315,7 @@ unsigned char app_u_rec_check(unsigned char *data, unsigned char checkLen)
                 received_crc = data[readlen + packLen - 1];               // CRC位于末尾
 
                 if (calculated_crc == received_crc)
-                {
-                  
+                {                  
                     app_u_motor_handle(&data[readlen], packLen);
                     retLen = packLen;
                     readlen += packLen;
@@ -285,15 +341,22 @@ unsigned char app_u_rec_check(unsigned char *data, unsigned char checkLen)
     remaining = checkLen - readlen;
     if (remaining > 0 && readlen > 0)
     {
-        memmove(data, &data[readlen], remaining);
+      memmove(data, &data[readlen], remaining);
     }
 
     return retLen;
 }
-void app_u_motor_rec_data(void )
+unsigned char  app_u_motor_rec_data(void )
 {
-  unsigned char peeklen;
-  app_u_rec_check(uart_motor_rx_buf, peeklen);
+  unsigned char retlen=0;
+  unsigned char peekLen=receiveLen;
+  if(receiveLen>=5)
+  {
+    retlen=app_u_rec_check(uart_motor_rx_buf, peekLen);
+    if(receiveLen>retlen)  receiveLen-=retlen;
+  }
+   
+  return retlen;
 }
 /**
   * @brief  USART3_IRQHandler

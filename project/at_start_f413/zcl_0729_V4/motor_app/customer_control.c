@@ -55,13 +55,12 @@ void mode_select(enum EndoMode mode)
 {
 	if(mode==EndoModePositionToggle)
 	{
-		motor_status.mode = mode;
-		u_pos_set.p_set.mode=1;				
+		motor_status.mode = mode;						
 	}
 	else 
 	{		
 		motor_status.mode = mode;
-		u_pos_set.p_set.mode = 0;	
+		
 	}
 }
 
@@ -72,12 +71,11 @@ void mode_select(enum EndoMode mode)
 *****************************************************************************************/
 void start()
 {
-		motor_status.status = Status_START;	
-		forward_speed=1000;
-		reverse_speed=1000;		
+		motor_status.status = Status_START;
+		/*		
 		if(motor_status.mode==EndoModePositionToggle)
-		{//spd mode					
-			app_u_motor_start(0,forward_speed,(upper_threshold)*10.0);
+		{//position mode				
+			app_u_motor_start(2,forward_speed,(upper_threshold)*10.0);
 		}	
 		else  if(motor_status.mode==EndoModeSpeedForward)
 		{//torque mode
@@ -90,7 +88,8 @@ void start()
 		else  if(motor_status.mode==EndoModeTorqueATC)
 		{
 			app_u_motor_start(0, forward_speed,(upper_threshold)*10.0);
-		}			
+		}
+		*/			
 }
 /*****************************stop the motor********************************************
   * @brief  stop the motor.
@@ -150,10 +149,8 @@ void set_position(int forward, int reverse)
 {	
 	//forward_position = forward * 182 * m_gear_ratio;
 	//reverse_position = reverse * 182 * m_gear_ratio;	
-	u_pos_set.p_set.position_ref1=forward ;	
-	u_pos_set.p_set.position_ref2=reverse;
-	app_u_motor_position_set((un_motor_positon_set*)&u_pos_set);
-	
+	u_pos_set.p_set.position_ref1=forward;	
+	u_pos_set.p_set.position_ref2=reverse;		
 }
 /**
   * @brief  Obtain the motor speed.
@@ -204,7 +201,7 @@ uint16_t get_position_angle(void)
 void customer_control()
 {
 	static int delay_cnt = 0;	//
-	
+	iq=u_motor_sta_replay.sta.current;
 	if(motor_settings.mode==EndoModePositionToggle)
 	{	
 		motor_status.reach_torque = toggle_torque_reach();			
@@ -216,11 +213,11 @@ void customer_control()
 		if(motor_status.status == Status_START)	{					
 			if(forward_position+reverse_position<0){
 				motor_status.status = Status_REVERSE;
-				app_u_motor_start(0, -toggle_speed,upper_threshold);
+				app_u_motor_start(2, -toggle_speed,upper_threshold);
 			}
 			else {
 				motor_status.status = Status_FORWARD;
-				app_u_motor_start(0, toggle_speed,upper_threshold);
+				app_u_motor_start(2, toggle_speed,upper_threshold);
 			}
 		}
 		if(motor_status.status == Status_FORWARD)	{			
@@ -422,7 +419,8 @@ unsigned short int GetRealTorque(void)
 	static unsigned char num;
 	num++;
 	num%=4;
-	torqueValueBuff[num]=(unsigned short int)(iq);	
+
+	torqueValueBuff[num]=(unsigned short int)((u_motor_sta_replay.sta.current));//iq);	
 	#ifdef ZHX//�к��ε��
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/36;//ZHX;10/(93*4);
 	#else
