@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp
+--cpu=Cortex-M4.fp.sp
 ".\objects\main.o"
 ".\objects\at32f413_clock.o"
 ".\objects\at32f413_int.o"
@@ -59,7 +59,7 @@
 ".\objects\at32f413_usb.o"
 ".\objects\at32f413_wdt.o"
 ".\objects\at32f413_wwdt.o"
---strict --scatter ".\objects\RHINO-Pro_bldc.sct"
+--library_type=microlib --strict --scatter ".\objects\RHINO-Pro_bldc.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list ".\listings\RHINO-Pro_bldc.map" -o .\objects\RHINO-Pro_bldc.axf

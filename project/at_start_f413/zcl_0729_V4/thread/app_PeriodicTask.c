@@ -164,16 +164,13 @@ void vAppPeriodicTask( void * pvParameters )
 { 	
 	void *pMalloc=NULL;
 	static unsigned int countPeriodicTimeMs=0;//		
-	#ifdef LED_INDICATE_ENABLE	
+	#ifdef LED_INDICATE_ENABLE		
+	LedFunctionSet(LED_B ,LED_KEEP_ON,LED_T_IDLE,LED_OFF);
+	LedFunctionSet(LED_Y ,LED_OFF,LED_T_IDLE,LED_OFF);		
 	if(get_insert_state()==SET)
-	{	//insert//charge
-		LedFunctionSet(LED_B ,LED_OFF,LED_T_HIGH_PRIORITY,LED_KEEP_ON);
+	{	//insert//charge	
+		LedFunctionSet(LED_B ,LED_KEEP_ON,LED_T_HIGH_PRIORITY,LED_KEEP_ON);
 		LedFunctionSet(LED_Y ,500,LED_T_HIGH_PRIORITY,LED_KEEP_ON);
-	}	
-	else 
-	{
-		LedFunctionSet(LED_B ,LED_KEEP_ON,LED_T_IDLE,LED_OFF);
-		LedFunctionSet(LED_Y ,LED_OFF,LED_T_IDLE,LED_OFF);
 	}	
 	#endif
 	for(;;)

@@ -1,4 +1,4 @@
-SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Nordic Semiconductor\nrf5x\bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Program Files\dotnet\;C:\Users\nr001\AppData\Local\Microsoft\WindowsApps;C:\Users\nr001\.dotnet\tools;C:\Users\nr001\AppData\Local\Programs\Microsoft VS Code\bin
+SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;C:\Keil_v5\ARM\ARMCLANG\Bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\Vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin
 SET CPU_TYPE=-AT32F413CCU7
 SET CPU_VENDOR=ArteryTek
 SET UV2_TARGET=RHINO-Pro_bldc
@@ -62,5 +62,3 @@ SET CPU_CLOCK=0x016E3600
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\at32f413_wdt.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\at32f413_wwdt.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmLink" --Via ".\objects\RHINO-Pro_bldc.lnp"
-"C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe" ".\objects\RHINO-Pro_bldc.axf" --i32combined --output ".\objects\RHINO-Pro_bldc.hex"
-C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe  --bin --output .\objects\bin\RHINO-Pro_bldc.bin .\objects\RHINO-Pro_bldc.axf
