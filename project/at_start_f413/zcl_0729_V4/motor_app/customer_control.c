@@ -73,21 +73,23 @@ void mode_select(enum EndoMode mode)
 void start()
 {
 		motor_status.status = Status_START;	
+		forward_speed=1000;
+		reverse_speed=1000;		
 		if(motor_status.mode==EndoModePositionToggle)
 		{//spd mode					
 			app_u_motor_start(0,forward_speed,(upper_threshold)*10.0);
 		}	
 		else  if(motor_status.mode==EndoModeSpeedForward)
 		{//torque mode
-			app_u_motor_start(1, forward_speed,(upper_threshold)*10.0);
+			app_u_motor_start(0, forward_speed,(upper_threshold)*10.0);
 		}
 		else  if(motor_status.mode==EndoModeSpeedReverse)
 		{
-			app_u_motor_start(1, reverse_speed,(upper_threshold)*10.0);
+			app_u_motor_start(0, reverse_speed,(upper_threshold)*10.0);
 		}
 		else  if(motor_status.mode==EndoModeTorqueATC)
 		{
-			app_u_motor_start(1, forward_speed,(upper_threshold)*10.0);
+			app_u_motor_start(0, forward_speed,(upper_threshold)*10.0);
 		}			
 }
 /*****************************stop the motor********************************************

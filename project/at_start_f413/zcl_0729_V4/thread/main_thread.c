@@ -831,7 +831,7 @@ void vApexGC_Task( void * pvParameters )
 		if(countTimeMs>200)//1s
 		{
 			countTimeMs=0;			
-			SEGGER_RTT_printf(0, "gc8k= %d gc400=%d GC_depth=%d\r\n",GC_8k_AdcValue, GC_400_AdcValue,GC_depth);
+			//SEGGER_RTT_printf(0, "gc8k= %d gc400=%d GC_depth=%d\r\n",GC_8k_AdcValue, GC_400_AdcValue,GC_depth);
 		}			
 		#endif
 		#ifdef  APEX_FUNCTION_EBABLE		
@@ -901,7 +901,7 @@ void vApexGC_Task( void * pvParameters )
 			restart_adc_sampling();
 			gc_in_or_exit(APEX_GC_EXIT);	
 			#ifdef DEBUG_RTT
-			SEGGER_RTT_printf(0, "ref-rate%d\r\n", sys_param_un.device_param.gc_ref_rate);	
+//			SEGGER_RTT_printf(0, "ref-rate%d\r\n", sys_param_un.device_param.gc_ref_rate);	
 			#endif
 			apexGC_Flag=0;
 		}
@@ -965,7 +965,7 @@ void vApexGC_Task( void * pvParameters )
 			GC_PWM_SwitchTimeManage(xTaskGetTickCount(),0);//restart	
 			restart_adc_sampling();	
 			#ifdef DEBUG_RTT
-			SEGGER_RTT_printf(0, "400Va=%d\r\n", sys_param_un.device_param.apex_tine_400Value);	
+//			SEGGER_RTT_printf(0, "400Va=%d\r\n", sys_param_un.device_param.apex_tine_400Value);	
 			#endif
 			apexGC_Flag=0;
 		}

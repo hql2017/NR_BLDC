@@ -139,7 +139,7 @@ static void MotorStatusMonitor(unsigned short int perTimeMs)
     if(status_mp6570 !=04&&foc_flag	!=0)//malfunction
 	{		
 		motorErrHeatBeat++;
-//		App_MotorControl(MOTOR_SETTING_ERR);//����ֹͣ������
+
 	}	
 }
 
@@ -158,20 +158,20 @@ unsigned char App_MotorControl(unsigned char cmd)
 	{	
 		case MOTOR_MODE_STOP:	
 			if(foc_flag!=0)
-			{				
-				stop();	
+			{	
 				foc_flag=0;	
-			}									
+			}
+			stop();										
 		#ifdef LED_INDICATE_ENABLE		
 			LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
 		#endif			
 			break;		
 		case MOTOR_MODE_START:			
 			if(foc_flag==0)		
-			{		
-				start();	
+			{	
 				foc_flag=1;							
 			}							
+			start();
 			vTaskDelay(5);//
 			#ifdef LED_INDICATE_ENABLE		
 				LedFunctionSet(LED_B ,500,LED_T_HIGH_PRIORITY,LED_KEEP_ON);		
@@ -182,7 +182,8 @@ unsigned char App_MotorControl(unsigned char cmd)
 			break;	
 		case MOTOR_MODE_SEARCH_ANGLE:	
 				stop();	
-				vTaskDelay(10);//delay_ms(2000);		
+				vTaskDelay(10);//delay_ms(2000);
+				SEGGER_RTT_printf(0,"cali%d\r\n", motorErrHeatBeat);		
 				app_u_motor_angle_cali();//???????
 				vTaskDelay(2000);//delay_ms(2000);
 				#ifdef DEBUG_RTT
@@ -231,18 +232,21 @@ void vAppMotorControlTask( void * pvParameters )
 	unsigned int count;
 	for(;;)	
 	{	
+		//app_u_motor_rec_data();
 		count++;
 		if(count==400)
 		{
 			count=0;
 			SEGGER_RTT_WriteString(0, "2s handle\r\n");	
 		}
-		app_u_motor_get_sta_req();//��ѯ����
+		app_u_motor_get_sta_req();
 	 	MotorStatusMonitor(5);	// status monitor 20ms periodic	
 		if(foc_flag) customer_control();	
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
 		#endif
-		vTaskDelay(5);//5ms
+		vTaskDelay(20);//5ms
+		
+		
 	}
 }

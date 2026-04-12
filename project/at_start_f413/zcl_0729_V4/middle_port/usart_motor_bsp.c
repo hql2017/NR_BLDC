@@ -89,7 +89,7 @@ void app_uart_motor_init(void)
   gpio_init(USART3RX_PORT, &gpio_init_struct);
 
   /* configure uart param */
-  usart_init(USART3, 9600, USART_DATA_8BITS, USART_STOP_1_BIT);
+  usart_init(USART3, 115200, USART_DATA_8BITS, USART_STOP_1_BIT);
   usart_transmitter_enable(USART3, TRUE);	
 	
 	
@@ -97,9 +97,8 @@ void app_uart_motor_init(void)
 	nvic_irq_enable(USART3_IRQn, 4, 0);
 	usart_interrupt_enable(USART3, USART_RDBF_INT, TRUE);
 	usart_flag_clear (USART3, USART_IDLEF_FLAG);	
-//	usart_interrupt_enable(USART3, USART_RDBF_INT|USART_IDLE_INT, TRUE);
-//	usart_flag_clear (USART3, USART_IDLEF_FLAG);	
-	usart_enable(USART3, TRUE);	 
+
+	usart_enable(USART3, TRUE);	  
 	//DMA
 	config_u_motor_uart3_dma();		
 }
@@ -114,7 +113,7 @@ void u_motor_send_data(u8 *buf, u16 len)
 //while(usart_flag_get(USART3, USART_TDBE_FLAG) == RESET){;} 
 	
 	while(usart_flag_get(USART3, USART_TDC_FLAG) == RESET){;} //	
-	memcpy(uart_motor_tx_buf, buf, len); 	
+	memcpy(buf, buf, len); 	
   dma_channel_enable(DMA2_CHANNEL3, FALSE); 	 	 
   dma_data_number_set(DMA2_CHANNEL3, len);  
   dma_channel_enable(DMA2_CHANNEL3, TRUE);	 
@@ -129,12 +128,13 @@ void u_motor_send_data(u8 *buf, u16 len)
  void AppUsartMotorTransmit(unsigned char id ,unsigned char *buf,unsigned short int len)
 {	
 	uart_motor_tx_buf[0]=0x55;
-	uart_motor_tx_buf[1]=len+5;	
-	uart_motor_tx_buf[2]=id;
-	if(len!=0) memcpy(&uart_motor_tx_buf[3],buf,len);	
-	uart_motor_tx_buf[len+3]=TX_CheckSum(uart_motor_tx_buf, len+3);
-	uart_motor_tx_buf[len+4]=0xAA;
-	u_motor_send_data(buf, len+5);
+  uart_motor_tx_buf[1]=0xAA;
+	uart_motor_tx_buf[2]=len+5;	
+	uart_motor_tx_buf[3]=id;
+	if(len!=0) memcpy(&uart_motor_tx_buf[4],buf,len);	
+	uart_motor_tx_buf[len+4]=TX_CheckSum(uart_motor_tx_buf, len+4);
+	
+	u_motor_send_data(uart_motor_tx_buf, len+5);
 }
 
 //*****************APP ***************************//
@@ -193,8 +193,8 @@ void app_u_motor_stop(void )
 }
 //软件复位
 void app_u_motor_reset(void )
-{
-
+{	
+    AppUsartMotorTransmit(U_MOTOR_ID_SOFT_RESET_REQ,uart_motor_tx_buf,0);	
 }
 //�������ݴ���
 void app_u_motor_handle(unsigned char *data,unsigned char packLen )
@@ -203,6 +203,7 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
 	codeId=data[2]&U_MOTOR_CODE_ID_MASK;		
 	if(codeId==U_MOTOR_ID_STATUS_INFO_REQ)
 	{
+    SEGGER_RTT_WriteString(0, "sta\r\n");	
 		if((data[2]&0x01)!=0)
 		{
 			memcpy(u_motor_sta_replay.data,&data[3],sizeof(get_status_reply_struct));	
@@ -223,61 +224,65 @@ uint8_t TX_CheckSum(uint8_t *buf, uint8_t len) //bufΪ���飬lenΪ���
 }
 
 /**
- * @brief �����������ݲ�У��Э���
- * @param data �������ݻ��������ᱻ�޸����ڻ������ڣ�
- * @param checkLen ��ǰ��������Ч���ݳ���
- * @return ���ص�һ���Ϸ����ĳ��ȣ������򷵻�0
- */
+* @brief 协议帧数据校验处理函数
+* @param data 输入的数据缓冲区，可能会被修改用于调整未解析部分的位置
+* @param checkLen 当前传入的有效数据长度
+* @return 返回第一个合法包的长度，若无则返回0
+*/
 unsigned char app_u_rec_check(unsigned char *data, unsigned char checkLen)
 {
-    
-unsigned char calculated_crc ; // �ų�CRC����
-        unsigned char received_crc ;                // CRCλ��ĩβ
-unsigned char remaining;
+    unsigned char calculated_crc ; // 计算出的CRC值
+    unsigned char received_crc ;   // 接收到的CRC值
+    unsigned char remaining;
     unsigned char readlen = 0;
     unsigned char retLen = 0;
-	unsigned char packLen;
-    const unsigned char minPackSize = 5; // ��С����С��֡ͷ(2)+����(1)+CRC(1)+����(>=1)
-if (!data || checkLen < 5) return 0;
+    unsigned char packLen;
+    const unsigned char minPackSize = 5; // 最小包长=帧头(2)+长度(1)+CRC(1)+负载(>=1)
+
+    if (!data || checkLen < minPackSize) return 0;
+
     while ((readlen + 1) < checkLen)
     {
-        // ����֡ͷ 0x55 0xAA
-        if (data[readlen] != 0x55 || data[readlen + 1] != 0xAA)
+        // 判断帧头 0x55 0xAA
+        if (data[readlen] == 0x55 && data[readlen + 1] == 0xAA)
         {
-            readlen++;
-            continue;
-        }
+            // 获取长度字段
+            if (readlen + 2 >= checkLen) break;
+            packLen = data[readlen + 2];
 
-        // ��ȡ�������ֶ�
-        if (readlen + 2 >= checkLen) break;
-         packLen = data[readlen + 2];
+            // 判断包长度有效性
+            if (packLen >= minPackSize && packLen <= (checkLen - readlen))
+            {
+                // 校验CRC
+                calculated_crc = TX_CheckSum(&data[readlen], packLen - 1); // 不包括CRC本身
+                received_crc = data[readlen + packLen - 1];               // CRC位于末尾
 
-        // �жϰ����Ⱥ�����
-        if (packLen < minPackSize || packLen > (checkLen - readlen))
-        {
-            readlen++;
-            continue;
-        }
-
-        // У��CRC
-         calculated_crc = TX_CheckSum(&data[readlen], packLen - 1); // �ų�CRC����
-      received_crc = data[readlen + packLen - 1];                // CRCλ��ĩβ
-
-        if (calculated_crc == received_crc)
-        {
-            app_u_motor_handle(&data[readlen], packLen);
-            retLen = packLen;
-            readlen += packLen;
-            break; // �ҵ��׸���ȷ�����˳�ѭ��
+                if (calculated_crc == received_crc)
+                {
+                  
+                    app_u_motor_handle(&data[readlen], packLen);
+                    retLen = packLen;
+                    readlen += packLen;
+                    break; // 找到正确包退出循环
+                }
+                else
+                {
+                    readlen++; // CRC失败也前进一位重新查找帧头
+                }
+            }
+            else
+            {
+                readlen++; // 长度无效继续向前找下一可能帧头位置
+            }
         }
         else
         {
-            readlen++; // CRCʧ��Ҳǰ��һλ���²���֡ͷ
+            readlen++;     // 帧头不符合继续向前找下一可能帧头位置
         }
     }
 
-    // ���ݻ��������ƶ�δ�����Ĳ�����ͷ��
-     remaining = checkLen - readlen;
+    // 将剩余未能解析的部分移动至缓存起始处
+    remaining = checkLen - readlen;
     if (remaining > 0 && readlen > 0)
     {
         memmove(data, &data[readlen], remaining);
@@ -285,7 +290,11 @@ if (!data || checkLen < 5) return 0;
 
     return retLen;
 }
-
+void app_u_motor_rec_data(void )
+{
+  unsigned char peeklen;
+  app_u_rec_check(uart_motor_rx_buf, peeklen);
+}
 /**
   * @brief  USART3_IRQHandler
   * @param  unsigned char cmdNum,unsigned char *str

@@ -109,6 +109,7 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 		{			
 			value=BAT_STATUS_CHARGING_EXIT;
 		}	
+		value=BAT_STATUS_CHARGING_EXIT;//test
 		if(recValue!=value)	 
 		{						
 			if(value==BAT_STATUS_CHARGING)

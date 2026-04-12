@@ -85,6 +85,8 @@ void app_u_motor_reset(void );
 void app_u_motor_angle_cali(void );
 void app_u_motor_get_sta_req(void );
 void app_u_motor_position_set(un_motor_positon_set* p_set);
+void  app_u_motor_rec_data(void);
+
 void AppUsartMotorTransmit(unsigned char id ,unsigned char *buf,unsigned short int len);
 
 #endif
