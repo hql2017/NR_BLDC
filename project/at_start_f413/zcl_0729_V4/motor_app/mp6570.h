@@ -3,7 +3,7 @@
 
 #include "stdint.h"
 
-extern u16  SPI_ByteRead(unsigned char addr) ;
+extern unsigned short int  SPI_ByteRead(unsigned char addr) ;
 extern void SPI_ByteWrite(unsigned char addr, unsigned char data1, unsigned char data2)     ;
 //MP6570 initialize function, default slave_addr = 0x00
 void mp6570_init(unsigned char slave_addr);  

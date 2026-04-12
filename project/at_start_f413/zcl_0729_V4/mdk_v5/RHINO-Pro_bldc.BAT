@@ -1,4 +1,7 @@
-SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;C:\Keil_v5\ARM\ARMCLANG\Bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\Vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin
+SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\pyocd;;c:\Users\Administrator\.vscode\extensions\arm.cmsis-csolution-1.66.0-win32-x64\tools\cmsis-toolbox\bin;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\pyocd;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\gdb\bin;c:\Users\Administrator\.vscode\extensions\vadimcn.vscode-lldb-1.12.1\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\Vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin
+SET ARMCC5_ASMOPT=--diag_suppress=9931
+SET ARMCC5_CCOPT=--diag_suppress=9931
+SET ARMCC5_LINKOPT=--diag_suppress=9931
 SET CPU_TYPE=-AT32F413CCU7
 SET CPU_VENDOR=ArteryTek
 SET UV2_TARGET=RHINO-Pro_bldc
@@ -18,7 +21,7 @@ SET CPU_CLOCK=0x016E3600
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\usart_port.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\apex_gc_port.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\app_queue.__i"
-"C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\ble_2340c2.__i"
+"C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\usart_motor_bsp.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\main_thread.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\app_periodictask.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\app_motorcontroltask.__i"
@@ -26,7 +29,6 @@ SET CPU_CLOCK=0x016E3600
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\app_user_storage.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmAsm" --Via ".\objects\startup_at32f413_ext_ram._ia"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\system_at32f413.__i"
-"C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\mp6570.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\customer_control.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\delay.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\croutine.__i"
@@ -62,3 +64,5 @@ SET CPU_CLOCK=0x016E3600
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\at32f413_wdt.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\objects\at32f413_wwdt.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmLink" --Via ".\objects\RHINO-Pro_bldc.lnp"
+"C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe" ".\objects\RHINO-Pro_bldc.axf" --i32combined --output ".\objects\RHINO-Pro_bldc.hex"
+C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe  --bin --output .\objects\bin\RHINO-Pro_bldc.bin .\objects\RHINO-Pro_bldc.axf

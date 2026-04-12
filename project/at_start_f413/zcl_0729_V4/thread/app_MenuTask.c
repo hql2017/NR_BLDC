@@ -499,7 +499,7 @@ static  error_status  MenuMotorParamUpdate(unsigned short int programNum)
 		}
 		else
 		{			
-			motor_settings.mode=(eEndoMode)motor_param_un.system_motor_pattern[programNum].dir;	
+			motor_settings.mode=motor_param_un.system_motor_pattern[programNum].dir;	
 		}	
 		motor_settings.forward_position=motor_param_un.system_motor_pattern[programNum].forwardPosition;
 		motor_settings.reverse_position=motor_param_un.system_motor_pattern[programNum].reversePosition;
@@ -2300,7 +2300,7 @@ static void  GC_ControlMotor(int depth,unsigned int systemTimeMs)
 {	
 	static 	unsigned char auto_flag_ap=null_signal;
 	static  unsigned int recTimeMs;
-	static eEndoMode  motor_run_mode=Max_endoMode;
+	static unsigned char  motor_run_mode=Max_endoMode;
 	unsigned char sendSignal=null_signal;
 	if(recTimeMs>systemTimeMs) recTimeMs=systemTimeMs;
 	if(sys_param_un.device_param.apexFunctionLoad==1)

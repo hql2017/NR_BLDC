@@ -52,7 +52,7 @@ void BatteryCapacityManage( unsigned int realTimeMs,unsigned int perTimeMs)
 				}
 				else 
 				{							
-					if(lowpowerCount>5000)//power off£ 5s
+					if(lowpowerCount>5000)//power offï¿½ 5s
 					{
 						sendMessage=power_off_signal;
 						xQueueSend(xQueueKeyMessage, &sendMessage, 0);	

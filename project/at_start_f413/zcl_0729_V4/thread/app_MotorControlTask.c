@@ -7,12 +7,12 @@
 #include "gpio_port.h"
 #include "at32f413_board.h"
 #include "app_MotorControlTask.h"
-#include "control.h"
-#include "mp6570.h"
+
 #include "customer_control.h"
 #include "para_list.h"
 
 #include "usart_port.h"
+#include "usart_motor_bsp.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -33,19 +33,19 @@ extern MotorSettings_TypeDef motor_settings;
 extern union Param_Union  sys_param_un; 
 extern union Motor_Para_Union  motor_param_un;
 
-#define USART_RX_CMD            0x05//gc=30,¼ì²âµ½Ïß
-#define USART_RX_1CMD           0x06//5~27 gc=18 //½øÈë¸ù¹Ü
-#define USART_RX_2CMD           0x07//1~4 gc=3 //¼õËÙ,¿¿½ü¸ù¼â
-#define USART_RX_3CMD           0x08//<=1  gc=1 //µ½´ï¸ù¼â
-#define USART_RX_4CMD           0x09//<=0  gc=0 //´©¹ý¸ù¼â
+#define USART_RX_CMD            0x05//gc=30,ï¿½ï¿½âµ½ï¿½ï¿½
+#define USART_RX_1CMD           0x06//5~27 gc=18 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define USART_RX_2CMD           0x07//1~4 gc=3 //ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define USART_RX_3CMD           0x08//<=1  gc=1 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define USART_RX_4CMD           0x09//<=0  gc=0 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 typedef struct   
 {
-	unsigned char       cmdSource;             //ÃüÁîÀ´Ô´£¨°´¼ü¡¢´®¿ÚµÈ£©
-	unsigned char       motorCmd_Type;         //ÃüÁîÀàÐÍ
-	unsigned char       motorDeviceId;        //µç»ú±àºÅ
-	unsigned char       controlCode;                //¿ØÖÆÖ¸ÁîID	
-	unsigned int        Data;                              //±¸ÓÃÊý¾Ý
+	unsigned char       cmdSource;             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÈ£ï¿½
+	unsigned char       motorCmd_Type;         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned char       motorDeviceId;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned char       controlCode;                //ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ID	
+	unsigned int        Data;                              //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }MotorCtl_TypeDef;
 
 /**
@@ -53,9 +53,9 @@ typedef struct
   * @param  none
   * @retval none
   */
-void MOTOR_150US_Callback(void)//100usÄ¿Ç°ÓÐµãÎÊÌâ£¬¸ÄÎª150us
+void MOTOR_150US_Callback(void)//100usÄ¿Ç°ï¿½Ðµï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½Îª150us
 {	
-	control_loop();	
+		
 	motorErrHeatBeat=0;		
 }
 /**
@@ -67,15 +67,15 @@ void MotorParamInit(void)
 {	
 	unsigned short int useNum=0;
 	stop();	
-//	motor_settings.mode =EndoModeSpeedForward;// 1; //ÉèÖÃ³ÉÐèÒªµÄÄ£Ê½
-//	motor_settings.autorev_mode =AutoReverseMode1;// 1; //ÉèÖÃ×ªËÙÄ£Ê½ÏÂ×Ô¶¯·´×ªÄ£Ê½
-//	motor_settings.forward_position = 30; //ÉèÖÃÕý×ª½Ç¶È
-//	motor_settings.reverse_position = -150; // ÉèÖÃ·´×ª½Ç¶È
-//	motor_settings.forward_speed = 50;//500; // ÉèÖÃËÙ¶ÈÄ£Ê½ÏÂÕý×ªËÙ¶È
-//	motor_settings.reverse_speed = -50;//500;// ÉèÖÃËÙ¶ÈÄ£Ê½ÏÂ·´×ªËÙ¶È£¨ÓÃ¸ºÊý£©
-//	motor_settings.upper_threshold = 4.0;//4.0; // ÉèÖÃ×ª¾Ø±£»¤µã(n.cm)
-//	motor_settings.lower_threshold =2.4;// 2.4; // ÉèÖÃ×ª¾ØÈ¡Ïû±£»¤µã60%×î´óÖµ
-//	motor_settings.toggle_mode_speed = 500; //ÉèÖÃÍù¸´Ä£Ê½ËÙ¶È
+//	motor_settings.mode =EndoModeSpeedForward;// 1; //ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ï¿½Òªï¿½ï¿½Ä£Ê½
+//	motor_settings.autorev_mode =AutoReverseMode1;// 1; //ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½×ªÄ£Ê½
+//	motor_settings.forward_position = 30; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½
+//	motor_settings.reverse_position = -150; // ï¿½ï¿½ï¿½Ã·ï¿½×ªï¿½Ç¶ï¿½
+//	motor_settings.forward_speed = 50;//500; // ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ù¶ï¿½
+//	motor_settings.reverse_speed = -50;//500;// ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½Ä£Ê½ï¿½Â·ï¿½×ªï¿½Ù¶È£ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½
+//	motor_settings.upper_threshold = 4.0;//4.0; // ï¿½ï¿½ï¿½ï¿½×ªï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½(n.cm)
+//	motor_settings.lower_threshold =2.4;// 2.4; // ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½60%ï¿½ï¿½ï¿½Öµ
+//	motor_settings.toggle_mode_speed = 500; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½Ù¶ï¿½
 //		MenuMotorParamUpdate(sys_param_un.device_param.use_num,0);
 //  MOTOR_SETTING_UPDATE	
 	useNum=sys_param_un.device_param.use_p_num;	
@@ -86,7 +86,7 @@ void MotorParamInit(void)
 	}
 	else
 	{
-		motor_settings.mode=(eEndoMode)motor_param_un.system_motor_pattern[useNum].dir;
+		motor_settings.mode=motor_param_un.system_motor_pattern[useNum].dir;
 	}	
 	if(motor_param_un.system_motor_pattern[useNum].motorSpeedNum >MAX_spd_Rpm_num) motor_param_un.system_motor_pattern[useNum].motorSpeedNum=MAX_spd_Rpm_num;	
 	if(motor_param_un.system_motor_pattern[useNum].toggleSpeedNum >spd600_Rpm_num) motor_param_un.system_motor_pattern[useNum].toggleSpeedNum=spd600_Rpm_num;			
@@ -133,18 +133,18 @@ static void MotorStatusMonitor(unsigned short int perTimeMs)
 	if(motorErrHeatBeat>100)//0.5s
 	{
 		motorErrHeatBeat=0;
-		App_MotorControl(MOTOR_SETTING_ERR);//err
+	
 //	gpio_bits_reset(GPIOB,GPIO_PINS_1);//...mp6570_disable()	
 	}	
     if(status_mp6570 !=04&&foc_flag	!=0)//malfunction
 	{		
 		motorErrHeatBeat++;
-//		App_MotorControl(MOTOR_SETTING_ERR);//ÒâÍâÍ£Ö¹£¬ÖØÆô
+//		App_MotorControl(MOTOR_SETTING_ERR);//ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}	
 }
 
 /**
-  * @brief  motor  run in certain mode,Ö¸ÁîÏÂ·¢
+  * @brief  motor  run in certain mode,Ö¸ï¿½ï¿½ï¿½Â·ï¿½
   * @param  uint8_t run_flag,run mode 
   * @retval none
   */
@@ -156,28 +156,23 @@ unsigned char App_MotorControl(unsigned char cmd)
 	//cmd 0,stop,1 update,2 start	
 	switch(cmd)
 	{	
-		case MOTOR_MODE_STOP:					
-			stop();					
+		case MOTOR_MODE_STOP:	
 			if(foc_flag!=0)
-			{
-				foc_flag=0;
-				MotorStatusMonitor(0);	// status monitor 20ms periodic	
-				vTaskDelay(5);//20ms
-				tmr_counter_enable(TMR3, FALSE);				
+			{				
+				stop();	
+				foc_flag=0;	
 			}									
-			#ifdef LED_INDICATE_ENABLE		
+		#ifdef LED_INDICATE_ENABLE		
 			LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
-			#endif			
+		#endif			
 			break;		
-		case MOTOR_MODE_START:		
+		case MOTOR_MODE_START:			
 			if(foc_flag==0)		
-			{
-				MotorStatusMonitor(0);	// status monitor 20ms periodic
-				tmr_counter_enable(TMR3, TRUE);//enable loop timer
-				vTaskDelay(5);//							
+			{		
+				start();	
 				foc_flag=1;							
 			}							
-			start();	
+			vTaskDelay(5);//
 			#ifdef LED_INDICATE_ENABLE		
 				LedFunctionSet(LED_B ,500,LED_T_HIGH_PRIORITY,LED_KEEP_ON);		
 			#endif		
@@ -185,55 +180,44 @@ unsigned char App_MotorControl(unsigned char cmd)
 		case MOTOR_SETTING_UPDATE:		
 				update_settings(&motor_settings);	
 			break;	
-		case MOTOR_MODE_SEARCH_ANGLE:					
-			taskENTER_CRITICAL();
-//			err=MP6570_AutoThetaBias(0x00, 500,2000); //ÕÒ³õÊ¼½Ç¶È
-			err=MP6570_AutoThetaBias(0x00, 300,2000); //ÕÒ³õÊ¼½Ç¶È
-			#ifdef DEBUG_RTT
-			SEGGER_RTT_printf(0, "err%d\r\n", err);	
-			#endif		
-			taskEXIT_CRITICAL(); 
-			stop();	
-			foc_flag=0;
-			MotorStatusMonitor(0);	// status monitor 20ms periodic	
-			vTaskDelay(5);//20ms
-			tmr_counter_enable(TMR3, FALSE);	
-			#ifdef LED_INDICATE_ENABLE
-			LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
-			#endif	
+		case MOTOR_MODE_SEARCH_ANGLE:	
+				stop();	
+				vTaskDelay(10);//delay_ms(2000);		
+				app_u_motor_angle_cali();//???????
+				vTaskDelay(2000);//delay_ms(2000);
+				#ifdef DEBUG_RTT
+				SEGGER_RTT_printf(0, "err%d\r\n", err);	
+				#endif	
+				foc_flag=0;	
+				#ifdef LED_INDICATE_ENABLE
+					LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
+				#endif	
 		break;
 		case MOTOR_MODE_RESTART:
-			stop();					
+			stop();				
 			if(foc_flag!=0)
 			{
-				foc_flag=0;
-				MotorStatusMonitor(0);	// status monitor 20ms periodic	
-				vTaskDelay(5);//20ms
-				tmr_counter_enable(TMR3, FALSE);				
-			}		
-			update_settings(&motor_settings); 			
-			MotorStatusMonitor(0);	// status monitor 20ms periodic
+				foc_flag=0;								
+			}
+			update_settings(&motor_settings);				
+			MotorStatusMonitor(0);	       // status monitor 20ms periodic
 			tmr_counter_enable(TMR3, TRUE);//enable loop timer
-			vTaskDelay(5);//							
-			foc_flag=1;				
-			start();
+			vTaskDelay(15);
+			foc_flag=1;	
+			start();	
 		break;			
 		case MOTOR_SETTING_ERR:		
 			stop();//err handle	
-			foc_flag=0;
-			MotorStatusMonitor(0);	// status monitor 20ms periodic	
+			foc_flag=0;			
 			vTaskDelay(5);//20ms
-//			tmr_counter_enable(TMR3, FALSE);	
-			MotorDeviceReset();
-			MotorParamInit();	
 		#ifdef DEBUG_RTT
 			SEGGER_RTT_printf(0,"motor control err ID%d\r\n", motorErrHeatBeat);	
 		#endif		
-		break;		
+			break;		
 		default:
 			stop();
 			foc_flag=0;
-		break;
+			break;
 	}
 	return err;	
 }
@@ -248,8 +232,14 @@ void vAppMotorControlTask( void * pvParameters )
 	for(;;)	
 	{	
 		count++;
-		MotorStatusMonitor(5);	// status monitor 20ms periodic	
-//		update_settings(&motor_settings);			
+		if(count==400)
+		{
+			count=0;
+			SEGGER_RTT_WriteString(0, "2s handle\r\n");	
+		}
+		app_u_motor_get_sta_req();//ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
+	 	MotorStatusMonitor(5);	// status monitor 20ms periodic	
+		if(foc_flag) customer_control();	
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
 		#endif

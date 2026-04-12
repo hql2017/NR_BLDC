@@ -191,7 +191,7 @@ void SPI_ByteWrite(unsigned char addr, unsigned char data1, unsigned char data2)
 //	delay_1us(1);
 	NSS_SET;	
 }
-u16 SPI_ByteRead(unsigned char addr)                                                
+unsigned short int  SPI_ByteRead(unsigned char addr)                                                
 {
 		u8 byte_Low,byte_High, byte1,byte2, byte3; 
 	 u16 data;                                                                                        

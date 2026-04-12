@@ -1,0 +1,273 @@
+version: "4.1"
+name: printf
+type: ARM
+deviceName: -AT32F413CCU7
+packDir: .pack/ArteryTek/AT32F413_DFP.2.0.6
+srcDirs: []
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders:
+    - name: user
+      files:
+        - path: ../src/main.c
+        - path: ../src/at32f413_clock.c
+        - path: ../src/at32f413_int.c
+        - path: lib/MPS_eMotion_Lib.lib
+      folders: []
+    - name: bsp（HDL+FML）
+      files:
+        - path: ../at32f413_board/time_init.c
+        - path: ../at32f413_board/wdt.c
+        - path: ../middle_port/oled_port.c
+        - path: ../middle_port/gpio_port.c
+        - path: ../middle_port/adc_port.c
+        - path: ../middle_port/buzz_port.c
+        - path: ../middle_port/key.c
+        - path: ../at32f413_board/at32f413_board.c
+        - path: ../src/flash.c
+        - path: ../middle_port/usart_port.c
+        - path: ../middle_port/apex_gc_port.c
+        - path: ../middle_port/app_queue.c
+        - path: ../middle_port/BLE_2340C2.c
+      folders: []
+    - name: thread（APL）
+      files:
+        - path: ../thread/main_thread.c
+        - path: ../thread/app_PeriodicTask.c
+        - path: ../thread/app_MotorControlTask.c
+        - path: ../thread/app_MenuTask.c
+        - path: ../thread/app_user_storage.c
+      folders: []
+    - name: cmsis
+      files:
+        - path: startup_at32f413_ext_ram.s
+        - path: ../../../../libraries/cmsis/cm4/device_support/system_at32f413.c
+        - path: ../../../../libraries/cmsis/dsp/Lib/ARM/arm_cortexM4lf_math.lib
+      folders: []
+    - name: Motor_app（FML）
+      files:
+        - path: ../motor_app/mp6570.c
+        - path: ../motor_app/customer_control.c
+        - path: ../motor_app/delay.c
+      folders: []
+    - name: readme
+      files: []
+      folders: []
+    - name: FreeRTOS
+      files:
+        - path: ../FreeRTOS/Source/croutine.c
+        - path: ../FreeRTOS/Source/list.c
+        - path: ../FreeRTOS/Source/queue.c
+        - path: ../FreeRTOS/Source/tasks.c
+        - path: ../FreeRTOS/Source/timers.c
+        - path: ../FreeRTOS/Source/event_groups.c
+      folders: []
+    - name: portRTOS
+      files:
+        - path: ../FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c
+        - path: ../FreeRTOS/Source/portable/MemMang/heap_2.c
+      folders: []
+    - name: SEEGER_RTT
+      files:
+        - path: ../tool/RTT/SEGGER_RTT_printf.c
+        - path: ../tool/RTT/SEGGER_RTT.c
+        - path: ../tool/RTT/SEGGER_RTT.h
+        - path: ../tool/RTT/SEGGER_RTT_Conf.h
+      folders: []
+    - name: firmware
+      files:
+        - path: ../../../../libraries/drivers/src/at32f413_acc.c
+        - path: ../../../../libraries/drivers/src/at32f413_adc.c
+        - path: ../../../../libraries/drivers/src/at32f413_bpr.c
+        - path: ../../../../libraries/drivers/src/at32f413_can.c
+        - path: ../../../../libraries/drivers/src/at32f413_crc.c
+        - path: ../../../../libraries/drivers/src/at32f413_crm.c
+        - path: ../../../../libraries/drivers/src/at32f413_debug.c
+        - path: ../../../../libraries/drivers/src/at32f413_dma.c
+        - path: ../../../../libraries/drivers/src/at32f413_exint.c
+        - path: ../../../../libraries/drivers/src/at32f413_flash.c
+        - path: ../../../../libraries/drivers/src/at32f413_gpio.c
+        - path: ../../../../libraries/drivers/src/at32f413_i2c.c
+        - path: ../../../../libraries/drivers/src/at32f413_misc.c
+        - path: ../../../../libraries/drivers/src/at32f413_pwc.c
+        - path: ../../../../libraries/drivers/src/at32f413_rtc.c
+        - path: ../../../../libraries/drivers/src/at32f413_sdio.c
+        - path: ../../../../libraries/drivers/src/at32f413_spi.c
+        - path: ../../../../libraries/drivers/src/at32f413_tmr.c
+        - path: ../../../../libraries/drivers/src/at32f413_usart.c
+        - path: ../../../../libraries/drivers/src/at32f413_usb.c
+        - path: ../../../../libraries/drivers/src/at32f413_wdt.c
+        - path: ../../../../libraries/drivers/src/at32f413_wwdt.c
+      folders: []
+    - name: ::CMSIS
+      files: []
+      folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 90514d92bd7d3ae9008a9023b2bf1eb8
+targets:
+  RHINO-Pro_bldc:
+    cppPreprocessAttrs:
+      defineList:
+        - AT32F413CCU7
+        - USE_STDPERIPH_DRIVER
+        - AT_START_F413_V1
+        - AT_START_F413_V1
+        - __CC_ARM
+        - __TARGET_FPU_VFP
+        - __FPU_PRESENT
+        - ARM_MATH_CM4
+        - DRIVE_BOARD
+      incList:
+        - .
+        - ../FreeRTOS
+        - ../FreeRTOS/Source
+        - ../FreeRTOS/Source/portable/RVDS/ARM_CM4F
+        - ../../../../libraries
+        - ../../../../libraries/drivers/src
+        - ../../../../libraries/drivers/inc
+        - ../../../../libraries/cmsis/cm4/core_support
+        - ../../../../libraries/cmsis/dsp
+        - ..
+        - ../middle_port
+        - ../inc
+        - ../at32f413_board
+        - ../motor
+        - ../motor_app
+        - ../tool
+        - ../src
+        - lib
+        - ../../../../libraries/cmsis/cm4/device_support/startup/mdk
+        - ../../../../libraries/cmsis/cm4/device_support
+        - ../thread
+        - objects
+        - listings
+        - ../FreeRTOS/Source/include
+        - ../tool/RTT
+        - RTE/_RHINO-Pro_bldc
+      libList: []
+    excludeList: []
+    settings:
+      debugger: cortex-debug
+    toolchain: AC5
+    toolchainConfigMap:
+      AC5:
+        archExtensions: ""
+        cpuType: Cortex-M4
+        floatingPointHardware: single
+        options:
+          version: 4
+          afterBuildTasks:
+            - name: "[Copy linker output for Keil User Commands]"
+              abortAfterFailed: true
+              command: mkdir ${KEIL_OUTPUT_DIR} & copy "${OutDir}\${ProjectName}.axf" "${KEIL_OUTPUT_DIR}\${KEIL_OUTPUT_NAME}.axf"
+              disable: false
+            - name: C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe  --bin --output .\objects\bin\RHINO-Pro_bldc.bin .\objects\RHINO-Pro_bldc.axf
+              abortAfterFailed: true
+              command: C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe  --bin --output .\objects\bin\RHINO-Pro_bldc.bin .\objects\RHINO-Pro_bldc.axf
+              disable: false
+          asm-compiler: {}
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: --diag_suppress=1 --diag_suppress=1295
+            C_FLAGS: --diag_suppress=1 --diag_suppress=1295
+            c99-mode: true
+            one-elf-section-per-function: true
+            optimization: level-0
+            warnings: all-warnings
+          global:
+            output-debug-info: enable
+            use-microLIB: false
+          linker:
+            output-format: elf
+            ro-base: "0x08000000"
+            rw-base: "0x20000000"
+            xo-base: ""
+        scatterFilePath: ""
+        storageLayout:
+          RAM:
+            - id: 1
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 3
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 1
+              isChecked: true
+              mem:
+                size: "0x8000"
+                startAddr: "0x20000000"
+              noInit: false
+              tag: IRAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: IRAM
+          ROM:
+            - id: 1
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 3
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 1
+              isChecked: true
+              isStartup: true
+              mem:
+                size: "0x40000"
+                startAddr: "0x8000000"
+              tag: IROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: IROM
+        useCustomScatterFile: false
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 4000
+    uploader: JLink

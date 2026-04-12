@@ -64,7 +64,6 @@
 
 #include <assert.h>
 #include "para_list.h"
-#include "common_function.h"
 #include "time_init.h"
 #include "at32f413_board.h"
 
@@ -73,8 +72,7 @@
 #include "gpio_port.h"
 #include "main_thread.h"
 #include "app_MotorControlTask.h"
-#include "control.h"
-#include "mp6570.h"
+
 #include "customer_control.h"
 
 #include "delay.h"
@@ -182,19 +180,10 @@ static void peripheral_init(void)
 		ButtonInit();
 		user_gpio_init();		
 		start_adc_acquisition(); 	
-//mp6570
-		err=MP6570_PortInit();    
-		if(err==0xFFFF)//IIC 模块		
-		{
-			MP6570_SetModeToSPI();
-		}	
-		MotorDeviceReset();
-		MotorParamInit();
-		MotorTimerInit(100,SYSTEM_CLOCK_FREQUENCY);
-		//end mp6570
+    app_uart_motor_init();
 		#ifdef APEX_FUNCTION_EBABLE
 			APEXInit();		
-		#else //单马达
+		#else //锟斤拷锟斤拷锟斤拷
 			user_uart_init();
 			config_uart_dma();		
 		#endif	
@@ -234,19 +223,20 @@ int main(void)
 		NormalTimerInit(1,SYSTEM_CLOCK_FREQUENCY);//for delay -1ms
 		Suspend_RTOS_stick(); // stop  stick  before   RTOS   created
 #else 
-		ConfigSys_Timer(SYSTEM_TIME_BASE_MS,SYSTEM_CLOCK_FREQUENCY);//配置系统计时TMR4时基为5ms	
+		ConfigSys_Timer(SYSTEM_TIME_BASE_MS,SYSTEM_CLOCK_FREQUENCY);//锟斤拷锟斤拷系统锟斤拷时TMR4时锟斤拷为5ms	
 #endif		
-		peripheral_init();	
+		peripheral_init();
+#ifdef DEBUG_RTT 
+		SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+		SEGGER_RTT_WriteString(0, "PDO-1\r\n");	
+#endif	
 		start_para_write_read();
 		DeviceParamCheck();
 		DevicePowerOnSequence();		
 #ifdef WDT_ENABLE			
 		Wdt_Init();				
 #endif 		
-#ifdef DEBUG_RTT 
-		SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
-		SEGGER_RTT_WriteString(0, "PDO-1\r\n");	
-#endif
+
 		xTaskCreate(vTaskStart, "vTaskStart", START_STACK_DEPTH, NULL, START_TASK_PRIORITY,&StartTask_Handle);			
 		vTaskStartScheduler();
 	  for(;;)	{;}			
