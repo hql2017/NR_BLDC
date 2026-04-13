@@ -52,13 +52,12 @@ extern un_motor_positon_set u_pos_set;
 
 typedef struct
 	{
-		unsigned char id;//����id,ack,(bit0=1��ack����
-		unsigned char idStatus;	//1�ȴ�ack,0����
-	
+	unsigned char idlesta;//code ID ;id&0x01 ==0x01 busy; ==0x00 idle	
+	unsigned int timeout;	
 }U_MOTOR_PACK_STATUS;
+extern U_MOTOR_PACK_STATUS u_motor_bus_idle_sta;
 	
-typedef struct
-{
+typedef struct{
 	unsigned char head1;
 	unsigned char head2;
 	unsigned char len;
@@ -69,8 +68,7 @@ typedef struct
 	float current;
 	float speed;
 	float position;
-	unsigned char check_sum;
-	
+	unsigned char check_sum;	
 }__attribute__((packed)) get_status_reply_struct;
 
 typedef union{

@@ -246,28 +246,52 @@ unsigned char App_MotorControl(unsigned char cmd)
 	* @param:  None
 	* @retval: None
 ==============================================================================*/
+/*
+unsigned char head1;
+	unsigned char head2;
+	unsigned char len;
+	unsigned char id;	//head
+	unsigned char device_enable;
+	unsigned char fault_type;
+	unsigned char motor_state;
+	float current;
+	float speed;
+	float position;
+	unsigned char check_sum;	
+	*/
 void vAppMotorControlTask( void * pvParameters )
 {	
-	unsigned int count;
+	unsigned int count,countS;
 	for(;;)	
-	{	
-				
-		count++;
-		if(count==100)
+	{		
+		count+=10;
+		if(countS>=20)
 		{
-			count=0;
-			SEGGER_RTT_printf(0, "m-spd=%x current=%x\r\n",u_motor_sta_replay.sta.speed,u_motor_sta_replay.sta.current);	
-			SEGGER_RTT_printf(0, "1s iq=%d\r\n",GetRealTorque());				
+			countS=0;					
+			SEGGER_RTT_printf(0, "1s iq=%.2fmA t=%d spd=%.2f\r\n", u_motor_sta_replay.sta.current*1000,GetRealTorque(),u_motor_sta_replay.sta.speed);				
 		}
-		if(u_motor_cmd_busy_flag==0&&count%50==0)app_u_motor_get_sta_req();
-		else u_motor_cmd_busy_flag=0;//busy
-		vTaskDelay(20);//5ms
+		if(count>=50)
+		{
+			countS++;
+			count=0;
+		   	if(u_motor_bus_idle_sta.idlesta==0)
+			{	
+				app_u_motor_get_sta_req();
+				u_motor_bus_idle_sta.timeout=0;
+			}
+			else 
+			{
+				u_motor_bus_idle_sta.timeout++;
+				if(u_motor_bus_idle_sta.timeout>20) u_motor_bus_idle_sta.idlesta=0;//timeout
+			}
+		}
+		vTaskDelay(5);//5ms
 		app_u_motor_rec_data();
-	 	MotorStatusMonitor(20 );	// status monitor 20ms periodic	
+	 	MotorStatusMonitor(10 );	// status monitor 20ms periodic	
 		if(foc_flag) customer_control();	
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
 		#endif
-		vTaskDelay(20);//5ms		
+		vTaskDelay(5);//5ms		
 	}
 }

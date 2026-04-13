@@ -29,7 +29,7 @@ typedef union{
 
 static u_f_in u_f_uni;
 
-
+U_MOTOR_PACK_STATUS u_motor_bus_idle_sta;
 static void config_u_motor_uart3_dma(void)
 {
   dma_init_type dma_init_struct;
@@ -134,8 +134,7 @@ void u_motor_send_data(u8 *buf, u16 len)
   uart_motor_tx_buf[1]=0xAA;
 	uart_motor_tx_buf[2]=len+5;	
 	uart_motor_tx_buf[3]=id;
-
- 
+  if(id!=U_MOTOR_ID_STATUS_INFO_REQ) u_motor_bus_idle_sta.idlesta=1;
 	if(len!=0) memcpy(&uart_motor_tx_buf[4],buf,len);	
   
 	uart_motor_tx_buf[len+4]=TX_CheckSum(uart_motor_tx_buf, len+4);
@@ -147,7 +146,8 @@ void u_motor_send_data(u8 *buf, u16 len)
 //参数配置
 void app_u_motor_param_config_init(void )
 {
-
+  u_motor_bus_idle_sta.idlesta=0;
+  u_motor_bus_idle_sta.timeout=0;
 }
 //状态查询
 void app_u_motor_get_sta_req(void )
@@ -158,8 +158,7 @@ void app_u_motor_get_sta_req(void )
 
 //位置设置
 void app_u_motor_position_set(un_motor_positon_set* p_set)
-{		
-  
+{		  
 	AppUsartMotorTransmit(U_MOTOR_ID_POSITION_MODE,&(p_set->data[4]),13);		
 }
 //
@@ -236,16 +235,17 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
   unsigned char i=0;
   if(data[2]>5)  dataLen=data[2]-5;
 	codeId=data[3]&U_MOTOR_CODE_ID_MASK;
-  #if 0
-  SEGGER_RTT_WriteString(0, "u_pack\r\n");
-  for( i=0;i<packLen;i++)
-  {
-    SEGGER_RTT_printf(0, " %02x\r\n",data[i]);
-  }
-  SEGGER_RTT_WriteString(0, " u_pack_len=\r\n",packLen);
-  #endif		
+  
 	if(codeId==U_MOTOR_ID_STATUS_INFO_REQ)
 	{
+    #if 0
+    SEGGER_RTT_WriteString(0, "u_pack\r\n");
+    for( i=0;i<packLen;i++)
+    {
+      SEGGER_RTT_printf(0, " %02x\r\n",data[i]);
+    }
+    SEGGER_RTT_printf(0, " -len=\r\n",packLen);
+    #endif		
 		if((data[3]&0x01)!=0)
 		{     
       //  SEGGER_RTT_WriteString(0, "sta r\r\n");
@@ -255,6 +255,7 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
 	}	
   else if(codeId==U_MOTOR_ID_SPEED_MODE)
   {
+    u_motor_bus_idle_sta.idlesta=0;
     if((data[3]&0x01)!=0)
 		{         
     // SEGGER_RTT_printf(0, "spd l=%d\r\n",packLen);
@@ -262,13 +263,13 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
   }	
   else if(codeId==U_MOTOR_ID_POSITION_MODE)
   {
+    u_motor_bus_idle_sta.idlesta=0;
     if((data[3]&0x01)!=0)
 		{ 
      //SEGGER_RTT_printf(0, "posi l=%d\r\n",packLen);
     }
   }	
 }  
-
 //-----����У��-----------------------
 uint8_t TX_CheckSum(uint8_t *buf, uint8_t len) //bufΪ���飬lenΪ���鳤��
 {

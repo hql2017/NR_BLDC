@@ -5,6 +5,7 @@
 #include "gpio_port.h"
 #include "math.h"
 
+
 #ifdef DEBUG_RTT
 #include "SEGGER_RTT.h"
 #endif
@@ -20,9 +21,9 @@ extern uint8_t menu_motor_run_mode; //�������ģʽ,0�����
 
 //*****************************
 unsigned short status_mp6570 = 0;
-unsigned short forward_speed; 
-unsigned short reverse_speed;
-unsigned short toggle_speed;
+ short forward_speed; 
+ short reverse_speed;
+ short toggle_speed;
 int	forward_position;
 int reverse_position;
 unsigned short upper_threshold;		//iq upper threshold
@@ -34,6 +35,7 @@ MotorStatus_TypeDef motor_status;
 MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
+
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
 unsigned short update_command ;
 
@@ -59,8 +61,7 @@ void mode_select(enum EndoMode mode)
 	}
 	else 
 	{		
-		motor_status.mode = mode;
-		
+		motor_status.mode = mode;		
 	}
 }
 
@@ -150,7 +151,9 @@ void set_position(int forward, int reverse)
 	//forward_position = forward * 182 * m_gear_ratio;
 	//reverse_position = reverse * 182 * m_gear_ratio;	
 	u_pos_set.p_set.position_ref1=forward;	
-	u_pos_set.p_set.position_ref2=reverse;		
+	u_pos_set.p_set.position_ref2=reverse;	
+	forward_position = forward ;
+	reverse_position = reverse ;	
 }
 /**
   * @brief  Obtain the motor speed.
@@ -159,9 +162,8 @@ void set_position(int forward, int reverse)
   */
 int get_motor_speed(void)
 {
-  int32_t speed_fbk;
-	uint32_t speed_temp;	
-	speed_fbk=u_motor_sta_replay.sta.speed;	
+  	int32_t speed_fbk;	
+	speed_fbk=(int32_t)u_motor_sta_replay.sta.speed;	
 	
 	return speed_fbk;
 }
@@ -201,7 +203,7 @@ uint16_t get_position_angle(void)
 void customer_control()
 {
 	static int delay_cnt = 0;	//
-	iq=u_motor_sta_replay.sta.current;
+	iq=u_motor_sta_replay.sta.current*1000;//mA
 	if(motor_settings.mode==EndoModePositionToggle)
 	{	
 		motor_status.reach_torque = toggle_torque_reach();			
@@ -393,7 +395,7 @@ unsigned char toggle_torque_reach(void)
 }
 void init_registers()
 {
-	iq=u_motor_sta_replay.sta.current;
+	iq=u_motor_sta_replay.sta.current*1000;//mA
 }
 
 /**
@@ -414,14 +416,13 @@ void MotorDeviceReset(void)
 unsigned short int GetRealTorque(void)
 {
 	unsigned  int retValue;
-  unsigned int torqueValue;
+  	unsigned int torqueValue;
 	static 	unsigned short int torqueValueBuff[4]={0};
 	static unsigned char num;
 	num++;
 	num%=4;
-
-	torqueValueBuff[num]=(unsigned short int)((u_motor_sta_replay.sta.current));//iq);	
-	#ifdef ZHX//�к��ε��
+ 	torqueValueBuff[num]=(unsigned short int)(fabsf(iq)); 		
+	#ifdef ZHX
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/36;//ZHX;10/(93*4);
 	#else
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//10/(130*4);
