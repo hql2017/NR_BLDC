@@ -11,11 +11,11 @@
 #endif
 //************AT32f413*****************
 #ifdef  ZHX
-#define NOT_DIRECTION_REVERSE//����ת��������		
+#define NOT_DIRECTION_REVERSE	
 #endif
 
-#define CURRENT_REVERSE_PARAM     1.041//�������������forward=1;
-extern uint8_t menu_motor_run_mode; //�������ģʽ,0������1����2����ת���Ƕȵ��ڣ�
+
+extern uint8_t menu_motor_run_mode; 
 
 
 
@@ -36,10 +36,9 @@ MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
 
+
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
 unsigned short update_command ;
-
-
 unsigned char torque_reach(void);
 unsigned char toggle_torque_reach(void);
 void set_torque_limit(float upper_limit, float lower_limit); //set torque limit in speed mode 
@@ -47,6 +46,41 @@ void set_speed(int forward, int reverse);//set forward and backward speed
 void set_position(int forward, int reverse);//set forward and backward position
 void set_toggle_mode_speed(int speed);
 void mode_select(enum EndoMode mode);//set working mode. 0:speed mode, 1: position back and forth mode;
+
+/*****************************set working mode********************************************
+  * @brief  空载电流计算.
+  * @param  mode: EndoModePositionToggle or EndoModeSpeedAutoReverse
+  * @retval None
+*****************************************************************************************/
+static float noload_current(float speed)
+{
+	// 300RPM  30mA
+	// 2000RPM 220mA
+	float ret_current;
+	if(speed<0)
+	{
+		if(speed>-50.0)
+		{
+			ret_current=-10;
+		}
+		else 
+		{
+			ret_current=(50.0-speed)*0.115;
+		}
+	}
+	else 
+	{
+		if(speed<50.0)
+		{
+			ret_current=10;
+		}
+		else 
+		{
+			ret_current=(speed-50.0)*0.115;
+		}
+	}
+	return ret_current;	
+}
 
 /*****************************set working mode********************************************
   * @brief  Set working mode.
@@ -97,7 +131,7 @@ void start()
   * @param  None
   * @retval None
 *****************************************************************************************/
-void stop()
+void stop(void)
 {	
 	motor_status.status = Status_STOP;	
 	app_u_motor_stop();		
@@ -117,7 +151,7 @@ void set_torque_limit(float upper_limit, float lower_limit)
 }
 void set_toggle_mode_speed(int speed)
 {
-	toggle_speed = (speed * m_gear_ratio);	
+	toggle_speed = (speed );//* m_gear_ratio);	
 }
 /*****************************set forward and backward speed******************************
   * @brief  set forward and backward speed
@@ -162,7 +196,7 @@ void set_position(int forward, int reverse)
   */
 int get_motor_speed(void)
 {
-  	int32_t speed_fbk;	
+  int32_t speed_fbk;	
 	speed_fbk=(int32_t)u_motor_sta_replay.sta.speed;	
 	
 	return speed_fbk;
@@ -208,7 +242,9 @@ void customer_control()
 	{	
 		motor_status.reach_torque = toggle_torque_reach();			
 	}
-	else motor_status.reach_torque = torque_reach();				//whether motor reach target torque	
+	else motor_status.reach_torque = torque_reach();	
+	
+	//whether motor reach target torque	
 	//往复模式	
 	if(motor_status.mode==EndoModePositionToggle)
 	{
@@ -333,9 +369,9 @@ void update_settings(MotorSettings_TypeDef *setting)
 
 unsigned char torque_reach(void)
 {	
-	u8 status = 0; 							// 1- reach_upper  2- reach_lower  0: middle-state
-	threshold_times = 3000;
-	if ((iq > upper_threshold)||(iq < -(upper_threshold*CURRENT_REVERSE_PARAM)))
+	u8 status = 0; 		// 1- reach_upper  2- reach_lower  0: middle-state
+	threshold_times = 450;//5*90=450ms//0.15*3000=450ms
+	if ((iq > upper_threshold)||(iq < -(upper_threshold)))
 	{
 		reach_upper_times ++;
 		if(reach_upper_times >=threshold_times)
@@ -345,7 +381,7 @@ unsigned char torque_reach(void)
 			status = 1; 
 		}
 	}
-	if((iq < lower_threshold)&&(iq > -(lower_threshold*CURRENT_REVERSE_PARAM)))
+	if((iq < lower_threshold)&&(iq > -(lower_threshold)))
 	{
 		reach_lower_times ++;
 		if(reach_lower_times >= threshold_times)
@@ -362,14 +398,14 @@ unsigned char toggle_torque_reach(void)
 {	
 	u8 status = 0; 							// 1- reach_upper  2- reach_lower  0: middle-state
 	u8 check_torque = 0;
-	threshold_times = 350;
+	threshold_times =10;//5*10=50ms//0.15*350=50ms;
 	if(((motor_settings.forward_position > - motor_settings.reverse_position)&&(motor_status.status == Status_FORWARD)) || ((motor_settings.forward_position < - motor_settings.reverse_position)&&(motor_status.status == Status_REVERSE)))
 		check_torque = 1;
 	else
 		check_torque = 0;
 	if(check_torque)
 	{
-		if ((iq > upper_threshold)||(iq < -(upper_threshold*CURRENT_REVERSE_PARAM)))
+		if ((iq > upper_threshold)||(iq < -(upper_threshold)))
 		{
 			reach_upper_times ++;
 			if(reach_upper_times >=threshold_times)
@@ -379,7 +415,7 @@ unsigned char toggle_torque_reach(void)
 				status = 1; 
 			}
 		}
-		if((iq < lower_threshold)&&(iq > -(lower_threshold*CURRENT_REVERSE_PARAM)))
+		if((iq < lower_threshold)&&(iq > -(lower_threshold)))
 		{
 			reach_lower_times ++;
 			if(reach_lower_times >= threshold_times)
@@ -419,9 +455,10 @@ unsigned short int GetRealTorque(void)
   	unsigned int torqueValue;
 	static 	unsigned short int torqueValueBuff[4]={0};
 	static unsigned char num;
+	float c_current=noload_current(u_motor_sta_replay.sta.speed);
 	num++;
 	num%=4;
- 	torqueValueBuff[num]=(unsigned short int)(fabsf(iq)); 		
+ 	torqueValueBuff[num]=(unsigned short int)(fabsf(iq-c_current)); 		
 	#ifdef ZHX
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/36;//ZHX;10/(93*4);
 	#else

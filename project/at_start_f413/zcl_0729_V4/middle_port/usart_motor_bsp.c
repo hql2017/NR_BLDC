@@ -196,6 +196,11 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
     u_pos_set.p_set.mode=0;
 		u_f_uni.f_value=spd*1.0;    
 		AppUsartMotorTransmit(U_MOTOR_ID_SPEED_MODE,u_f_uni.data,sizeof(float));
+		
+		//un_set_speed_tq_limit_struct u_p_str;
+		//u_p_str.tq_set.iq_ref=1.500;//torqueI;
+		//u_p_str.tq_set.speed_ref=spd*1.0;
+		//AppUsartMotorTransmit(U_MOTOR_ID_TORQUE_MODE_SET,&(u_p_str.data[4]),8);	
 	}
   else if(s_t_mode==2)//往复运动
   {

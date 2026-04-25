@@ -268,7 +268,7 @@ void vAppMotorControlTask( void * pvParameters )
 		if(countS>=20)
 		{
 			countS=0;					
-			SEGGER_RTT_printf(0, "1s iq=%.2fmA t=%d spd=%.2f\r\n", u_motor_sta_replay.sta.current*1000,GetRealTorque(),u_motor_sta_replay.sta.speed);				
+			SEGGER_RTT_printf(0, "1s iq=%.3fA t=%d spd=%.2f T=%d\r\n", 0.045,GetRealTorque(),u_motor_sta_replay.sta.speed,GetRealTorque());				
 		}
 		if(count>=50)
 		{
@@ -287,8 +287,8 @@ void vAppMotorControlTask( void * pvParameters )
 		}
 		vTaskDelay(5);//5ms
 		app_u_motor_rec_data();
-	 	MotorStatusMonitor(10 );	// status monitor 20ms periodic	
-		if(foc_flag) customer_control();	
+	 	MotorStatusMonitor(10 );	// status monitor 20ms periodic			
+		if(foc_flag!=0)customer_control();	
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
 		#endif

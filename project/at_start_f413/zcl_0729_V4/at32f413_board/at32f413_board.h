@@ -43,7 +43,7 @@ extern "C" {
 #define LED_INDICATE_ENABLE
 #endif
 
-#ifndef DEBUG_RTT
+#ifdef DEBUG_RTT
 #define DEBUG_RTT
 #include "SEGGER_RTT.h"
 #endif 
