@@ -63,6 +63,8 @@ QueueHandle_t  xQueueKeyMessage;//key
 QueueHandle_t  xQueueBeepMode;//beep
 QueueHandle_t  xQueueMenuValue;//menu	
 QueueHandle_t  xQueueBatValue;//batValue	
+
+QueueHandle_t  xQueueMotorControlMessage;
 	
 SemaphoreHandle_t xSemaphoreDispRfresh;			
 SemaphoreHandle_t xSemaphorePowerOff;
@@ -1420,6 +1422,7 @@ void vTaskStart( void * pvParameters )
 		xQueueBeepMode =	xQueueCreate(1,sizeof(uint8_t));
 		xQueueBatValue =	xQueueCreate(1,sizeof(unsigned short int));	
 		xQueueMenuValue = xQueueCreate(1,sizeof(uint8_t));
+		xQueueMotorControlMessage = xQueueCreate(4,6);
 	//Semaphore		
 		xSemaphorePowerOff=xSemaphoreCreateBinary() ; //power off		
 		xSemaphoreDispRfresh=xSemaphoreCreateBinary();

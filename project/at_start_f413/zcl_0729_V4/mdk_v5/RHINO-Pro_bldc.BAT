@@ -1,4 +1,7 @@
-SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\Vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin
+SET PATH=C:\Keil_v5\ARM\ARMCC\Bin;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\pyocd;;c:\Users\Administrator\.vscode\extensions\arm.cmsis-csolution-1.66.0-win32-x64\tools\cmsis-toolbox\bin;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\pyocd;c:\Users\Administrator\.vscode\extensions\arm.vscode-cmsis-debugger-1.2.0-win32-x64\tools\gdb\bin;c:\Users\Administrator\.vscode\extensions\vadimcn.vscode-lldb-1.12.1\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\Vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;c:\Users\Administrator\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand
+SET ARMCC5_ASMOPT=--diag_suppress=9931
+SET ARMCC5_CCOPT=--diag_suppress=9931
+SET ARMCC5_LINKOPT=--diag_suppress=9931
 SET CPU_TYPE=-AT32F413CCU7
 SET CPU_VENDOR=ArteryTek
 SET UV2_TARGET=RHINO-Pro_bldc

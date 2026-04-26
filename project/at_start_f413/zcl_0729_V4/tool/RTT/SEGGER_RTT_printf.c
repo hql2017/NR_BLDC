@@ -442,20 +442,18 @@ int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pPa
       case '%':
         _StoreChar(&BufferDesc, '%');
         break;
-        // 添加输出浮点数的功能。默认带两位小数。
-        case 'f':
-        case 'F': {
-					
-          float fv = (float)va_arg(*pParamList, double);    // 取出输入的浮点数值
-          if(fv < 0) _StoreChar(&BufferDesc, '-');          // 判断正负号
-          v = abs((int)fv);                                 // 取正整数部分
-          _PrintInt(&BufferDesc, v, 10u, NumDigits, FieldWidth, FormatFlags);  //显示整数
-          _StoreChar(&BufferDesc, '.');                                        //显示小数点
-          v = abs((int)(fv * 100));               
-          v = v % 100;
-          _PrintInt(&BufferDesc, v, 10u, 2, FieldWidth, FormatFlags);          //显示小数点后两位
-				}
-          break;        
+			case 'f':
+			case 'F': {
+				float fv = (float)va_arg(*pParamList, double);    // 取出输入的浮点数值
+				if(fv < 0) _StoreChar(&BufferDesc, '-');          // 判断正负号
+				v = abs((int)fv);                                 // 取正整数部分
+				_PrintInt(&BufferDesc, v, 10u, NumDigits, FieldWidth, FormatFlags);  //显示整数
+				_StoreChar(&BufferDesc, '.');                                        //显示小数点
+			 v = abs((int)(fv * 100));
+			 v = v % 100;
+			 _PrintInt(&BufferDesc, v, 10u, 2, FieldWidth, FormatFlags);          //显示小数点后两位
+			 break;
+			}
        
       default:
         break;

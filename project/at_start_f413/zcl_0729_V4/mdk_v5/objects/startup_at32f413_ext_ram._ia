@@ -1,4 +1,4 @@
---cpu Cortex-M4.fp.sp -g --apcs=interwork 
+--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"
 -I.\RTE\_RHINO-Pro_bldc
 -IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include
 -IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include

@@ -94,7 +94,7 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 	static unsigned char recValue,sendBuff=MENU_LOGO_PAGE;	
 	if(perTimeMs!=0&&realTimeMs%perTimeMs==0)	
 	{
-		if(get_insert_state()==SET) 
+		if(get_insert_state()==RESET) 
 		{		
 			if(get_charge_state()==RESET)
 			{

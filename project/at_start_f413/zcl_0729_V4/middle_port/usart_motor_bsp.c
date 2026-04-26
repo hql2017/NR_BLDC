@@ -194,9 +194,8 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
 	if(s_t_mode==0)	//速度模式
 	{
     u_pos_set.p_set.mode=0;
-		u_f_uni.f_value=spd*1.0;    
-		AppUsartMotorTransmit(U_MOTOR_ID_SPEED_MODE,u_f_uni.data,sizeof(float));
-		
+		u_f_uni.f_value=spd*1.0;   
+		AppUsartMotorTransmit(U_MOTOR_ID_SPEED_MODE,u_f_uni.data,sizeof(float));		
 		//un_set_speed_tq_limit_struct u_p_str;
 		//u_p_str.tq_set.iq_ref=1.500;//torqueI;
 		//u_p_str.tq_set.speed_ref=spd*1.0;
@@ -205,7 +204,7 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
   else if(s_t_mode==2)//往复运动
   {
     //位置设置  
-    SEGGER_RTT_WriteString(0, "psi start\r\n");
+   
     u_pos_set.p_set.mode =1;
     u_pos_set.p_set.position_ref1=150;
     u_pos_set.p_set.position_ref2=-150;
@@ -359,9 +358,18 @@ unsigned char  app_u_motor_rec_data(void )
   if(receiveLen>=5)
   {
     retlen=app_u_rec_check(uart_motor_rx_buf, peekLen);
-    if(receiveLen>retlen)  receiveLen-=retlen;
+    if(retlen>0)
+    {
+      if(receiveLen>retlen)
+      {  
+        memcpy(uart_motor_rx_buf,&uart_motor_rx_buf[retlen],receiveLen-retlen);
+        receiveLen-=retlen;
+      }
+      else {//over flow
+        receiveLen=0;       
+      }
+    }    
   }
-   
   return retlen;
 }
 /**

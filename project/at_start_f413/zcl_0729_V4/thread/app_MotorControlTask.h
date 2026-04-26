@@ -1,6 +1,15 @@
 #ifndef __APP_MOTORCONTROLTASK
 #define __APP_MOTORCONTROLTASK
 
+typedef struct{
+    unsigned char cmdCode;
+    unsigned char cmdLen;
+    float fData;
+}__attribute__((packed))MOTOR_CTR_MESSAGE;
+typedef union{
+    MOTOR_CTR_MESSAGE msg;
+    unsigned char mBuff[6];
+}U_MOTOR_CTR_MESSAGE;
 
 //#define MOTOR_MODE_CW            	0 //顺时针，达到力矩反转，
 //#define MOTOR_MODE_CCW            1 //逆时针，达到力矩反转，
@@ -15,9 +24,15 @@
 #define MOTOR_USART_GC_CONTROL      8//单马达串口根测控制
 #define MOTOR_SETTING_ERR   9  //err
 
+#define M_RUN_STOP         	0
+#define M_RUN_GENERA       	1
+#define M_RUN_CALI_ANGLE    2  //找初始角度
+#define M_RUN_CALI_CURRENT  4  //找空载电流
+
+#define MOTOR_MINI_DELAY_TIME_MS  50
+
 extern void MotorParamInit(void);
 
-extern void motor_run_status( unsigned char run_flag);
 extern unsigned char App_MotorControl(unsigned char cmd);	
 
 #endif

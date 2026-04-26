@@ -22,10 +22,8 @@
 #include "event_groups.h"	
 extern EventGroupHandle_t  WDTEventGroup;
 #endif
-//QueueHandle_t  xQueueMotorControl;	
+extern QueueHandle_t  xQueueMotorControlMessage;	
 
-static uint8_t foc_flag;
-static uint8_t u_motor_cmd_busy_flag=0;
 static unsigned int motorErrHeatBeat;
  
 extern MotorStatus_TypeDef motor_status;
@@ -137,108 +135,43 @@ static void MotorStatusMonitor(unsigned short int perTimeMs)
   */
 unsigned char App_MotorControl(unsigned char cmd)
 {
-	unsigned char err;
-	err=0;
+	unsigned char err=0;
+	U_MOTOR_CTR_MESSAGE u_ctr_tx_msg;
+	BaseType_t q_tx_sta;	
 	if(cmd>MOTOR_SETTING_ERR) return err;				
-	//cmd 0,stop,1 update,2 start
-	u_motor_cmd_busy_flag=1;	
-	switch(cmd)
-	{	
-		case MOTOR_MODE_STOP:	
-			if(foc_flag!=0)
-			{	
-				stop();	
-				foc_flag=0;	
-			}
-												
+	//cmd 0,stop,1 update,2 start	
+	u_ctr_tx_msg.msg.cmdCode=cmd;
+	u_ctr_tx_msg.msg.cmdLen=0;
+	if(cmd==MOTOR_MODE_STOP)
+	{
 		#ifdef LED_INDICATE_ENABLE		
-			LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
-		#endif			
-			break;		
-		case MOTOR_MODE_START:			
-			if(foc_flag==0)		
-			{	
-				start();
-				foc_flag=1;							
-			}	
-			vTaskDelay(5);//
-			#ifdef LED_INDICATE_ENABLE		
-				LedFunctionSet(LED_B ,500,LED_T_HIGH_PRIORITY,LED_KEEP_ON);		
-			#endif		
-			break;
-		case MOTOR_SETTING_UPDATE:		
-				update_settings(&motor_settings);	
-			break;	
-		case MOTOR_MODE_SEARCH_ANGLE:	
-				stop();	
-				foc_flag=0;
-				vTaskDelay(5);						
-				app_u_motor_angle_cali();//???????
-				//delay_ms(4000);
-				#ifdef WDT_ENABLE
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);
-				xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-				vTaskDelay(MAX_WDT_FEED_TIME_MS);				
-				#endif
-				app_u_motor_angle_cali_next();
-				#ifdef DEBUG_RTT
-				SEGGER_RTT_printf(0, "motor_angle%d\r\n", err);	
-				#endif						
-				#ifdef LED_INDICATE_ENABLE
-					LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
-				#endif	
-		break;
-		case MOTOR_MODE_RESTART:
-			stop();				
-			if(foc_flag!=0)
-			{
-				foc_flag=0;								
-			}
-			update_settings(&motor_settings);				
-			MotorStatusMonitor(0);	       // status monitor 20ms periodic
-	
-			vTaskDelay(15);
-			foc_flag=1;	
-			start();	
-		break;			
-		case MOTOR_SETTING_ERR:		
-			stop();//err handle	
-			foc_flag=0;			
-			vTaskDelay(5);//20ms
-		#ifdef DEBUG_RTT
-			SEGGER_RTT_printf(0,"motor control err ID%d\r\n", motorErrHeatBeat);	
-		#endif		
-			break;		
-		default:
-			stop();
-			foc_flag=0;
-			break;
+		LedFunctionSet( LED_B ,500,LED_T_HIGH_PRIORITY,LED_OFF);
+		#endif	
 	}
+	else if(cmd==MOTOR_MODE_START)
+	{
+		#ifdef LED_INDICATE_ENABLE		
+		LedFunctionSet(LED_B ,500,LED_T_HIGH_PRIORITY,LED_KEEP_ON);		
+		#endif	
+	}	
+	else if(cmd==MOTOR_MODE_RESTART)
+	{
+		stop();
+		vTaskDelay(10);
+
+	}
+	else if(cmd==MOTOR_SETTING_ERR)
+	{
+		#ifdef DEBUG_RTT
+		SEGGER_RTT_printf(0,"motor control err ID%d\r\n", motorErrHeatBeat);	
+		#endif
+	}
+	q_tx_sta=xQueueSend(xQueueMotorControlMessage, u_ctr_tx_msg.mBuff, 0);
+	if(q_tx_sta!=pdTRUE)		
+	{//resend
+		vTaskDelay(10);
+		xQueueSend(xQueueMotorControlMessage, u_ctr_tx_msg.mBuff, 0);
+	}	
 	return err;	
 }
 /*=======================motor control task===================================
@@ -261,37 +194,149 @@ unsigned char head1;
 	*/
 void vAppMotorControlTask( void * pvParameters )
 {	
-	unsigned int count,countS;
+	unsigned int countMs,countS,cali_index,cali_start_s;
+	unsigned char buff[6]={0};
+	U_MOTOR_CTR_MESSAGE u_ctr_rx_msg;
+	BaseType_t m_ctr_sta;
+	unsigned char m_run_sta=0,mStaLen;
 	for(;;)	
-	{		
-		count+=10;
-		if(countS>=20)
+	{	
+		vTaskDelay(10);	
+		countMs+=10;	
+		mStaLen=app_u_motor_rec_data();
+		if(mStaLen!=0)
 		{
-			countS=0;					
-			SEGGER_RTT_printf(0, "1s iq=%.3fA t=%d spd=%.2f T=%d\r\n", 0.045,GetRealTorque(),u_motor_sta_replay.sta.speed,GetRealTorque());				
-		}
-		if(count>=50)
-		{
-			countS++;
-			count=0;
-		   	if(u_motor_bus_idle_sta.idlesta==0)
-			{	
-				app_u_motor_get_sta_req();
-				u_motor_bus_idle_sta.timeout=0;
-			}
-			else 
+			vTaskDelay(10);
+			if(countMs>=1000)
 			{
-				u_motor_bus_idle_sta.timeout++;
-				if(u_motor_bus_idle_sta.timeout>20) u_motor_bus_idle_sta.idlesta=0;//timeout
-			}
+				countMs=0;
+				countS++;
+				#ifdef DEBUG_RTT									
+				SEGGER_RTT_printf(0, "1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
+				#endif				
+			}	
 		}
-		vTaskDelay(5);//5ms
-		app_u_motor_rec_data();
-	 	MotorStatusMonitor(10 );	// status monitor 20ms periodic			
-		if(foc_flag!=0)customer_control();	
+		else 
+		{
+			m_ctr_sta = xQueueReceive(xQueueMotorControlMessage, buff, 0);
+			if(m_ctr_sta==pdTRUE)
+			{
+				memcpy(u_ctr_rx_msg.mBuff,buff,sizeof(MOTOR_CTR_MESSAGE));
+				switch(u_ctr_rx_msg.msg.cmdCode)
+				{
+					case MOTOR_MODE_STOP:
+					{
+						stop();
+						m_run_sta=M_RUN_STOP;
+					}
+					break;	
+					case MOTOR_MODE_START:
+					if(m_run_sta==MOTOR_MODE_STOP)
+					{ 
+						start();
+						m_run_sta=M_RUN_GENERA;
+					}
+					break;
+					case MOTOR_SETTING_UPDATE:
+					update_settings(&motor_settings);
+					break;
+					case MOTOR_MODE_SEARCH_ANGLE:
+					{
+						m_run_sta=M_RUN_CALI_ANGLE;	
+						stop();	
+						vTaskDelay(5);//5ms
+						cali_start_s=1;	
+						#if 1
+						app_u_motor_angle_cali();
+						#else 
+						AppUsartMotorTransmit(U_MOTOR_ID_PREPARE_MODE,&sendBuff,0);//静默
+						vTaskDelay(10); 
+						AppUsartMotorTransmit(U_MOTOR_ID_ENCODE_CALI,&sendBuff,0);
+						#endif	
+					}
+					break;
+					case MOTOR_MODE_RESTART:					 
+						{
+							stop();		
+							vTaskDelay(5);//5ms
+							countMs+=5;	
+							update_settings(&motor_settings);
+							vTaskDelay(5);//5ms
+							countMs+=5;	
+							start();
+							m_run_sta=MOTOR_MODE_START;							
+						}	
+					break;
+					case MOTOR_USART_GC_CONTROL:
+						#ifdef DEBUG_RTT
+						SEGGER_RTT_printf(0, "gc ctrl motor \r\n");	
+						#endif
+					break;
+					case MOTOR_SETTING_ERR:
+					stop();
+					break;
+					default:
+					stop();
+					break;
+				}
+				vTaskDelay(5);//5ms
+				countMs+=5;	
+			}
+			else
+			{
+				if(countMs%50==0) app_u_motor_get_sta_req();
+			}			
+			if(m_run_sta==M_RUN_STOP)
+			{
+				
+			}	
+			else if(m_run_sta==M_RUN_GENERA)
+			{
+				customer_control();
+			}
+			else if(m_run_sta==M_RUN_CALI_ANGLE)
+			{
+				if(cali_start_s!=0)
+				{
+					if(cali_start_s>2)
+					{//5秒
+						cali_start_s=1;
+						app_u_motor_angle_cali_next();
+						m_run_sta = M_RUN_CALI_CURRENT;
+						cali_index=0;
+					}					
+				}
+				
+			}
+			else if(m_run_sta==M_RUN_CALI_CURRENT)
+			{
+				//100~2200RPM
+				if(countMs>=1000)
+				{//1s
+					//记录电流
+					//更换下一速度
+					countMs=0;	
+					cali_index%=20;
+					app_u_motor_start(0, speed_list[cali_index]*1.0,4.0);
+					cali_index++;				
+					stop();	
+					if(cali_index==20)	
+					{
+						m_run_sta = M_RUN_STOP;
+					}	
+				}
+			}
+		}		
+		if(countMs>2000)
+		{//disconnect 	
+			countMs=0;
+			if(m_run_sta!=M_RUN_STOP )stop();
+			vTaskDelay(10);	
+			app_u_motor_reset();
+			vTaskDelay(10);	
+		}
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
-		#endif
-		vTaskDelay(5);//5ms		
+		#endif			
 	}
 }

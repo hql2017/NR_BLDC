@@ -245,15 +245,15 @@ ARM Macro Assembler    Page 4
   149 00000000 F241 0000 
               F2C2 0000        MOV32            R0, #0x20001000
   150 00000008 4685            MOV              SP, R0
-  151 0000000A 480E            LDR              R0, =extend_sram
+  151 0000000A 480B            LDR              R0, =extend_sram
   152 0000000C 4780            BLX              R0
   153 0000000E F240 0000 
               F6C0 0000        MOV32            R0, #0x08000000
   154 00000016 F8D0 D000       LDR              SP, [R0]
   155 0000001A         
-  156 0000001A 480B            LDR              R0, =SystemInit
+  156 0000001A 4808            LDR              R0, =SystemInit
   157 0000001C 4780            BLX              R0
-  158 0000001E 480B            LDR              R0, =__main
+  158 0000001E 4808            LDR              R0, =__main
   159 00000020 4700            BX               R0
   160 00000022                 ENDP
   161 00000022         
@@ -550,37 +550,25 @@ ARM Macro Assembler    Page 9
   343 00000038         ;*******************************************************
                        ************************
   344 00000038                 IF               :DEF:__MICROLIB
-  351 00000038         
-  352 00000038                 IMPORT           __use_two_region_memory
-  353 00000038                 EXPORT           __user_initial_stackheap
-  354 00000038         
-  355 00000038         __user_initial_stackheap
-  356 00000038         
-  357 00000038 4805            LDR              R0, = Heap_Mem
-  358 0000003A 4906            LDR              R1, = (Stack_Mem + Stack_Size)
-  359 0000003C 4A06            LDR              R2, = (Heap_Mem +  Heap_Size)
-  360 0000003E 4B07            LDR              R3, = Stack_Mem
-  361 00000040 4770            BX               LR
-  362 00000042         
-  363 00000042 00 00           ALIGN
-  364 00000044         
-  365 00000044                 ENDIF
-  366 00000044         
-  367 00000044                 END
+  345 00000038         
+  346 00000038                 EXPORT           __initial_sp
+  347 00000038                 EXPORT           __heap_base
+  348 00000038                 EXPORT           __heap_limit
+  349 00000038         
+  350 00000038                 ELSE
+  365                          ENDIF
+  366 00000038         
+  367 00000038                 END
               00000000 
               00000000 
-              00000000 
-              00000000 
-              00000800 
-              00000800 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
 interwork --depend=.\objects\startup_at32f413_ext_ram.d -o.\objects\startup_at3
 2f413_ext_ram.o -I.\RTE\_RHINO-Pro_bldc -IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\
 CMSIS\Core\Include -IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\I
-nclude --predefine="__UVISION_VERSION SETA 541" --predefine="AT32F413CCU7 SETA 
-1" --predefine="_RTE_ SETA 1" --list=.\listings\startup_at32f413_ext_ram.lst st
-artup_at32f413_ext_ram.s
+nclude --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 541"
+ --predefine="AT32F413CCU7 SETA 1" --predefine="_RTE_ SETA 1" --list=.\listings
+\startup_at32f413_ext_ram.lst startup_at32f413_ext_ram.s
 
 
 
@@ -601,9 +589,8 @@ Symbol: Stack_Mem
    Definitions
       At line 18 in file startup_at32f413_ext_ram.s
    Uses
-      At line 358 in file startup_at32f413_ext_ram.s
-      At line 360 in file startup_at32f413_ext_ram.s
-
+      None
+Comment: Stack_Mem unused
 __initial_sp 00000800
 
 Symbol: __initial_sp
@@ -611,7 +598,8 @@ Symbol: __initial_sp
       At line 19 in file startup_at32f413_ext_ram.s
    Uses
       At line 42 in file startup_at32f413_ext_ram.s
-Comment: __initial_sp used once
+      At line 346 in file startup_at32f413_ext_ram.s
+
 3 symbols
 
 
@@ -633,25 +621,24 @@ Symbol: Heap_Mem
    Definitions
       At line 29 in file startup_at32f413_ext_ram.s
    Uses
-      At line 357 in file startup_at32f413_ext_ram.s
-      At line 359 in file startup_at32f413_ext_ram.s
-
+      None
+Comment: Heap_Mem unused
 __heap_base 00000000
 
 Symbol: __heap_base
    Definitions
       At line 28 in file startup_at32f413_ext_ram.s
    Uses
-      None
-Comment: __heap_base unused
+      At line 347 in file startup_at32f413_ext_ram.s
+Comment: __heap_base used once
 __heap_limit 00000800
 
 Symbol: __heap_limit
    Definitions
       At line 30 in file startup_at32f413_ext_ram.s
    Uses
-      None
-Comment: __heap_limit unused
+      At line 348 in file startup_at32f413_ext_ram.s
+Comment: __heap_limit used once
 4 symbols
 
 
@@ -1431,15 +1418,7 @@ Symbol: WWDT_IRQHandler
       At line 60 in file startup_at32f413_ext_ram.s
       At line 208 in file startup_at32f413_ext_ram.s
 
-__user_initial_stackheap 00000038
-
-Symbol: __user_initial_stackheap
-   Definitions
-      At line 355 in file startup_at32f413_ext_ram.s
-   Uses
-      At line 353 in file startup_at32f413_ext_ram.s
-Comment: __user_initial_stackheap used once
-76 symbols
+75 symbols
 
 
 
@@ -1453,8 +1432,7 @@ Symbol: Heap_Size
       At line 25 in file startup_at32f413_ext_ram.s
    Uses
       At line 29 in file startup_at32f413_ext_ram.s
-      At line 359 in file startup_at32f413_ext_ram.s
-
+Comment: Heap_Size used once
 Stack_Size 00000800
 
 Symbol: Stack_Size
@@ -1462,8 +1440,7 @@ Symbol: Stack_Size
       At line 15 in file startup_at32f413_ext_ram.s
    Uses
       At line 18 in file startup_at32f413_ext_ram.s
-      At line 358 in file startup_at32f413_ext_ram.s
-
+Comment: Stack_Size used once
 __Vectors_Size 00000170
 
 Symbol: __Vectors_Size
@@ -1495,14 +1472,6 @@ Symbol: __main
    Uses
       At line 158 in file startup_at32f413_ext_ram.s
 Comment: __main used once
-__use_two_region_memory 00000000
-
-Symbol: __use_two_region_memory
-   Definitions
-      At line 352 in file startup_at32f413_ext_ram.s
-   Uses
-      None
-Comment: __use_two_region_memory unused
 extend_sram 00000000
 
 Symbol: extend_sram
@@ -1511,5 +1480,5 @@ Symbol: extend_sram
    Uses
       At line 151 in file startup_at32f413_ext_ram.s
 Comment: extend_sram used once
-4 symbols
-431 symbols in table
+3 symbols
+428 symbols in table

@@ -16,9 +16,6 @@
 
 
 extern uint8_t menu_motor_run_mode; 
-
-
-
 //*****************************
 unsigned short status_mp6570 = 0;
  short forward_speed; 
@@ -36,7 +33,7 @@ MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
 
-
+static float current_noLoad[20]={10,10,10,10,10,10,10,10,10,10,10,10,10};//100~2200
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
 unsigned short update_command ;
 unsigned char torque_reach(void);
@@ -106,25 +103,7 @@ void mode_select(enum EndoMode mode)
 *****************************************************************************************/
 void start()
 {
-		motor_status.status = Status_START;
-		/*		
-		if(motor_status.mode==EndoModePositionToggle)
-		{//position mode				
-			app_u_motor_start(2,forward_speed,(upper_threshold)*10.0);
-		}	
-		else  if(motor_status.mode==EndoModeSpeedForward)
-		{//torque mode
-			app_u_motor_start(0, forward_speed,(upper_threshold)*10.0);
-		}
-		else  if(motor_status.mode==EndoModeSpeedReverse)
-		{
-			app_u_motor_start(0, reverse_speed,(upper_threshold)*10.0);
-		}
-		else  if(motor_status.mode==EndoModeTorqueATC)
-		{
-			app_u_motor_start(0, forward_speed,(upper_threshold)*10.0);
-		}
-		*/			
+	if(u_motor_sta_replay.sta.motor_state==0)  motor_status.status = Status_START;
 }
 /*****************************stop the motor********************************************
   * @brief  stop the motor.
@@ -133,8 +112,8 @@ void start()
 *****************************************************************************************/
 void stop(void)
 {	
-	motor_status.status = Status_STOP;	
-	app_u_motor_stop();		
+	app_u_motor_stop();
+	motor_status.status = Status_STOP;		
 }
 
 /*****************************set torque limit in speed mode*****************************
@@ -370,7 +349,7 @@ void update_settings(MotorSettings_TypeDef *setting)
 unsigned char torque_reach(void)
 {	
 	u8 status = 0; 		// 1- reach_upper  2- reach_lower  0: middle-state
-	threshold_times = 450;//5*90=450ms//0.15*3000=450ms
+	threshold_times = 90;//5*90=450ms//0.15*3000=450ms
 	if ((iq > upper_threshold)||(iq < -(upper_threshold)))
 	{
 		reach_upper_times ++;
