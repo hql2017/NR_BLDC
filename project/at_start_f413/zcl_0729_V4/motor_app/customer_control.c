@@ -276,7 +276,7 @@ void customer_control()
 		}
 		else if(motor_status.status == Status_REVERSE)
 		{			
-			if(motor_status.reach_torque == 1)   {											
+			if(motor_status.reach_torque == 1)   {															
 				motor_status.status = Status_FORWARD;	
 				app_u_motor_start(0, -reverse_speed,upper_threshold);			
 			}	
@@ -349,7 +349,7 @@ void update_settings(MotorSettings_TypeDef *setting)
 unsigned char torque_reach(void)
 {	
 	u8 status = 0; 		// 1- reach_upper  2- reach_lower  0: middle-state
-	threshold_times = 90;//5*90=450ms//0.15*3000=450ms
+	threshold_times = 45;//10*90=450ms//0.15*3000=450ms
 	if ((iq > upper_threshold)||(iq < -(upper_threshold)))
 	{
 		reach_upper_times ++;
@@ -377,7 +377,7 @@ unsigned char toggle_torque_reach(void)
 {	
 	u8 status = 0; 							// 1- reach_upper  2- reach_lower  0: middle-state
 	u8 check_torque = 0;
-	threshold_times =10;//5*10=50ms//0.15*350=50ms;
+	threshold_times =5;//10*5=50ms//0.15*350=50ms;
 	if(((motor_settings.forward_position > - motor_settings.reverse_position)&&(motor_status.status == Status_FORWARD)) || ((motor_settings.forward_position < - motor_settings.reverse_position)&&(motor_status.status == Status_REVERSE)))
 		check_torque = 1;
 	else

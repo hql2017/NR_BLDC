@@ -68,15 +68,13 @@ QueueHandle_t  xQueueMotorControlMessage;
 	
 SemaphoreHandle_t xSemaphoreDispRfresh;			
 SemaphoreHandle_t xSemaphorePowerOff;
+SemaphoreHandle_t xSemaphoreCaliFinish;
 
 #ifdef  APEX_FUNCTION_EBABLE
 SemaphoreHandle_t xSemaphoreApexAutoCalibration;
 #endif
 	
-extern void vAppPeriodicTask( void * pvParameters );	
-extern void vAppMotorControlTask( void * pvParameters );
-extern void vAppMenuManageTask( void * pvParameters );
-extern void MenuDevicePowerOff(unsigned char feedDogFlag);
+
 	
 #if configUSE_TIMERS
 TimerHandle_t xTimer01;
@@ -901,10 +899,8 @@ void vApexGC_Task( void * pvParameters )
 			gc_list_init((int)sys_param_un.device_param.empty_rate,(int)(sys_param_un.device_param.gc_ref_rate-10));	//���		
 			GC_PWM_SwitchTimeManage(xTaskGetTickCount(),0);//restart	
 			restart_adc_sampling();
-			gc_in_or_exit(APEX_GC_EXIT);	
-			#ifdef DEBUG_RTT
-//			SEGGER_RTT_printf(0, "ref-rate%d\r\n", sys_param_un.device_param.gc_ref_rate);	
-			#endif
+			gc_in_or_exit(APEX_GC_EXIT);				
+//			DEBUG_PRINTF("ref-rate%d\r\n", sys_param_un.device_param.gc_ref_rate);	
 			apexGC_Flag=0;
 		}
 		else if(apexGC_Flag==2)//����У׼
@@ -966,9 +962,9 @@ void vApexGC_Task( void * pvParameters )
 		//too low ,error value ������
 			GC_PWM_SwitchTimeManage(xTaskGetTickCount(),0);//restart	
 			restart_adc_sampling();	
-			#ifdef DEBUG_RTT
-//			SEGGER_RTT_printf(0, "400Va=%d\r\n", sys_param_un.device_param.apex_tine_400Value);	
-			#endif
+			
+//			DEBUG_PRINTF( "400Va=%d\r\n", sys_param_un.device_param.apex_tine_400Value);	
+			
 			apexGC_Flag=0;
 		}
 		else 
@@ -1426,6 +1422,7 @@ void vTaskStart( void * pvParameters )
 	//Semaphore		
 		xSemaphorePowerOff=xSemaphoreCreateBinary() ; //power off		
 		xSemaphoreDispRfresh=xSemaphoreCreateBinary();
+		xSemaphoreCaliFinish=xSemaphoreCreateBinary();//caliFinish
 	#ifdef  APEX_FUNCTION_EBABLE
 		xSemaphoreApexAutoCalibration=xSemaphoreCreateBinary();
 	#endif

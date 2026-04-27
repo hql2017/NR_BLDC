@@ -24,10 +24,10 @@ typedef union{
 #define MOTOR_USART_GC_CONTROL      8//单马达串口根测控制
 #define MOTOR_SETTING_ERR   9  //err
 
-#define M_RUN_STOP         	0
-#define M_RUN_GENERA       	1
-#define M_RUN_CALI_ANGLE    2  //找初始角度
-#define M_RUN_CALI_CURRENT  4  //找空载电流
+#define m_run_stop         	0
+#define m_run_genara       	1
+#define m_run_cali_angle    2  //找初始角度
+#define m_run_cali_current  4  //找空载电流
 
 #define MOTOR_MINI_DELAY_TIME_MS  50
 

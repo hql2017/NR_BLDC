@@ -159,8 +159,8 @@ void para_print(void)
 {
 
 	#ifdef DEBUG_RTT	
-	SEGGER_RTT_printf(0,"*******sys_para******\r\n",0);
-	SEGGER_RTT_printf(0,"W_flag %d , err_num %d , sys_num %d ,\r\n empty_rate %d , use_hand %d , use_num %d ,\r\n vol %d , apical_action_flag %d , auto_start_flag %d ,\r\n mt_i %d , auto_stop_flag %d , ref_rate %d , ref_tine %d\r\n", 
+	DEBUG_PRINTF("*******sys_para******\r\n",0);
+	DEBUG_PRINTF("W_flag %d , err_num %d , sys_num %d ,\r\n empty_rate %d , use_hand %d , use_num %d ,\r\n vol %d , apical_action_flag %d , auto_start_flag %d ,\r\n mt_i %d , auto_stop_flag %d , ref_rate %d , ref_tine %d\r\n", 
 
 	sys_param_un.device_param.W_flag,
 	sys_param_un.device_param.empty_rate,  
@@ -193,14 +193,14 @@ void para_print(void)
 void start_para_write_read(void)
 {
   flash_read(FLASH_SYSTEM_PARAM_ADDR, sys_param_un.para_buff, sizeof(Device_Param_Def));
-	#ifdef DEBUG_RTT
-	SEGGER_RTT_printf(0,"first read w_flag is %d \r\n",sys_param_un.device_param.W_flag);
-	#endif
+
+	DEBUG_PRINTF("first read w_flag is %d \r\n",sys_param_un.device_param.W_flag);
+	
   if(sys_param_un.device_param.W_flag==40530)//(DataStr[4]*256+DataStr[5]))
   {
-	#ifdef DEBUG_RTT
-		SEGGER_RTT_printf(0,"NO DO WRITE\r\n",0);	
-	#endif   
+
+		DEBUG_PRINTF("NO DO WRITE\r\n",0);	
+
     flash_read(FLASH_MOTOR_PARAM_ADDR,(uint16_t *)&motor_param_un.system_motor_pattern,11*sizeof(SYSTEM_MOTOR_PARAM));     
   }
   else
@@ -208,14 +208,13 @@ void start_para_write_read(void)
    default_para_write_buff();
    flash_write(FLASH_SYSTEM_PARAM_ADDR, sys_param_un.para_buff, sizeof(Device_Param_Def)); 
    flash_write(FLASH_MOTOR_PARAM_ADDR,(uint16_t *)&motor_param_un.system_motor_pattern,11*sizeof(SYSTEM_MOTOR_PARAM));   
-	#ifdef DEBUG_RTT
-		 SEGGER_RTT_printf(0,"DO ONE WRITE\r\n",0);
-	#endif		
+
+		DEBUG_PRINTF("DO ONE WRITE\r\n",0);
+
    flash_read(FLASH_SYSTEM_PARAM_ADDR, sys_param_un.para_buff, sizeof(Device_Param_Def));   
    flash_read(FLASH_MOTOR_PARAM_ADDR,(uint16_t *)&motor_param_un.system_motor_pattern,11*sizeof(SYSTEM_MOTOR_PARAM));
-	#ifdef DEBUG_RTT
-		 SEGGER_RTT_printf(0,"DO ONE READ\r\n",0);
-	#endif       
+	DEBUG_PRINTF("DO ONE READ\r\n",0);
+    
   }
    para_copy_default();
    para_print();
@@ -244,9 +243,8 @@ void write_para_judge(void)
   }
   else
   {
-	#ifdef DEBUG_RTT
-		SEGGER_RTT_printf(0,"PARA NO CHANGE\r\n",0);
-	#endif   
+	DEBUG_PRINTF("PARA NO CHANGE\r\n",0);
+
   } 
   err=buffer_compare(default_mt_un.pattern_buff,motor_param_un.pattern_buff,11*sizeof(SYSTEM_MOTOR_PARAM));
   if(ERROR==err) //参数已经被篡改
@@ -255,9 +253,8 @@ void write_para_judge(void)
   }
   else
   {
-	#ifdef DEBUG_RTT
-		SEGGER_RTT_printf(0,"MOTOR PARA NO CHANGE\r\n",0);
-	#endif      
+		DEBUG_PRINTF("MOTOR PARA NO CHANGE\r\n",0);
+   
   }
 }
 error_status buffer_compare(uint16_t* p_buffer1, uint16_t* p_buffer2, uint16_t buffer_length)

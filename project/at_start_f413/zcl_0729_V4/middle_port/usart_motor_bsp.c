@@ -204,7 +204,6 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
   else if(s_t_mode==2)//往复运动
   {
     //位置设置  
-   
     u_pos_set.p_set.mode =1;
     u_pos_set.p_set.position_ref1=150;
     u_pos_set.p_set.position_ref2=-150;

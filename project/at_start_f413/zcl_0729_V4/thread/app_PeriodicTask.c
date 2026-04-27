@@ -15,12 +15,7 @@
 	extern EventGroupHandle_t  WDTEventGroup;
 #endif
 	
-extern SemaphoreHandle_t xSemaphoreDispRfresh;
-extern QueueHandle_t   xQueueMenuValue;
-extern QueueHandle_t  xQueueKeyMessage;//key
-extern QueueHandle_t  xQueueBeepMode;//beep
-extern QueueHandle_t  xQueueBatValue;//batValue
-extern TaskHandle_t  beepTemporaryTask_Handle;
+
 
 #define BAT_STATUS_CHARGING  	  0x10//insert  charging
 #define BAT_STATUS_CHARGING_FULL  0x11//insert charging full
@@ -148,10 +143,8 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 				xQueueSend(xQueueBeepMode, &sendBuff, 0);
 				sendBuff=null_signal;					
 			}	
-			recValue=value;		//disp
-			#ifdef DEBUG_RTT
-				SEGGER_RTT_WriteString(0, "insert\r\n");	
-			#endif
+			recValue=value;		//disp		
+			DEBUG_PRINTF( "insert\r\n");				
 		}	
 	}
 }
@@ -196,11 +189,11 @@ void vAppPeriodicTask( void * pvParameters )
 				vPortFree(pMalloc);
 				pMalloc=NULL;
 			}										
-			#ifdef DEBUG_RTT
-//		SEGGER_RTT_printf(0, "fresh time Ms %d\r\n", countPeriodicTimeMs);			
-//		SEGGER_RTT_printf(0, "vat= %d\r\n", get_vbat_value());
-//		SEGGER_RTT_printf(0, "vbus= %d\r\n", get_v_motor_value());
-			#endif			
+			
+//	DEBUG_PRINTF( "fresh time Ms %d\r\n", countPeriodicTimeMs);			
+//		DEBUG_PRINTF( "vat= %d\r\n", get_vbat_value());
+//		DEBUG_PRINTF( "vbus= %d\r\n", get_v_motor_value());
+				
 		}	
 		
 	}

@@ -22,7 +22,7 @@
 #include "event_groups.h"	
 extern EventGroupHandle_t  WDTEventGroup;
 #endif
-extern QueueHandle_t  xQueueMotorControlMessage;	
+	
 
 static unsigned int motorErrHeatBeat;
  
@@ -161,10 +161,9 @@ unsigned char App_MotorControl(unsigned char cmd)
 
 	}
 	else if(cmd==MOTOR_SETTING_ERR)
-	{
-		#ifdef DEBUG_RTT
-		SEGGER_RTT_printf(0,"motor control err ID%d\r\n", motorErrHeatBeat);	
-		#endif
+	{	
+		DEBUG_PRINTF("motor control err ID%d\r\n", motorErrHeatBeat);	
+		
 	}
 	q_tx_sta=xQueueSend(xQueueMotorControlMessage, u_ctr_tx_msg.mBuff, 0);
 	if(q_tx_sta!=pdTRUE)		
@@ -206,46 +205,41 @@ void vAppMotorControlTask( void * pvParameters )
 		mStaLen=app_u_motor_rec_data();
 		if(mStaLen!=0)
 		{
-			vTaskDelay(10);
 			if(countMs>=1000)
 			{
 				countMs=0;
-				countS++;
-				#ifdef DEBUG_RTT									
-				SEGGER_RTT_printf(0, "1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
-				#endif				
+				countS++;											
+				DEBUG_PRINTF("1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
 			}	
-		}
-		else 
+		}		
+		m_ctr_sta = xQueueReceive(xQueueMotorControlMessage, buff, 0);
+		if(m_ctr_sta==pdTRUE)
 		{
-			m_ctr_sta = xQueueReceive(xQueueMotorControlMessage, buff, 0);
-			if(m_ctr_sta==pdTRUE)
+			memcpy(u_ctr_rx_msg.mBuff,buff,sizeof(MOTOR_CTR_MESSAGE));
+			switch(u_ctr_rx_msg.msg.cmdCode)
 			{
-				memcpy(u_ctr_rx_msg.mBuff,buff,sizeof(MOTOR_CTR_MESSAGE));
-				switch(u_ctr_rx_msg.msg.cmdCode)
-				{
-					case MOTOR_MODE_STOP:
+				case MOTOR_MODE_STOP:
 					{
 						stop();
-						m_run_sta=M_RUN_STOP;
+						m_run_sta=m_run_stop;
 					}
-					break;	
-					case MOTOR_MODE_START:
+				break;	
+				case MOTOR_MODE_START:
 					if(m_run_sta==MOTOR_MODE_STOP)
 					{ 
 						start();
-						m_run_sta=M_RUN_GENERA;
+						m_run_sta=m_run_genara;
 					}
 					break;
-					case MOTOR_SETTING_UPDATE:
+				case MOTOR_SETTING_UPDATE:
 					update_settings(&motor_settings);
 					break;
-					case MOTOR_MODE_SEARCH_ANGLE:
+				case MOTOR_MODE_SEARCH_ANGLE:
 					{
-						m_run_sta=M_RUN_CALI_ANGLE;	
+						m_run_sta=m_run_cali_angle;	
 						stop();	
 						vTaskDelay(5);//5ms
-						cali_start_s=1;	
+						cali_start_s=0;	
 						#if 1
 						app_u_motor_angle_cali();
 						#else 
@@ -255,82 +249,77 @@ void vAppMotorControlTask( void * pvParameters )
 						#endif	
 					}
 					break;
-					case MOTOR_MODE_RESTART:					 
-						{
-							stop();		
-							vTaskDelay(5);//5ms
-							countMs+=5;	
-							update_settings(&motor_settings);
-							vTaskDelay(5);//5ms
-							countMs+=5;	
-							start();
-							m_run_sta=MOTOR_MODE_START;							
-						}	
-					break;
-					case MOTOR_USART_GC_CONTROL:
-						#ifdef DEBUG_RTT
-						SEGGER_RTT_printf(0, "gc ctrl motor \r\n");	
-						#endif
-					break;
-					case MOTOR_SETTING_ERR:
-					stop();
-					break;
-					default:
-					stop();
-					break;
-				}
-				vTaskDelay(5);//5ms
-				countMs+=5;	
-			}
-			else
-			{
-				if(countMs%50==0) app_u_motor_get_sta_req();
-			}			
-			if(m_run_sta==M_RUN_STOP)
-			{
-				
-			}	
-			else if(m_run_sta==M_RUN_GENERA)
-			{
-				customer_control();
-			}
-			else if(m_run_sta==M_RUN_CALI_ANGLE)
-			{
-				if(cali_start_s!=0)
-				{
-					if(cali_start_s>2)
-					{//5秒
-						cali_start_s=1;
-						app_u_motor_angle_cali_next();
-						m_run_sta = M_RUN_CALI_CURRENT;
-						cali_index=0;
-					}					
-				}
-				
-			}
-			else if(m_run_sta==M_RUN_CALI_CURRENT)
-			{
-				//100~2200RPM
-				if(countMs>=1000)
-				{//1s
-					//记录电流
-					//更换下一速度
-					countMs=0;	
-					cali_index%=20;
-					app_u_motor_start(0, speed_list[cali_index]*1.0,4.0);
-					cali_index++;				
-					stop();	
-					if(cali_index==20)	
+				case MOTOR_MODE_RESTART:					 
 					{
-						m_run_sta = M_RUN_STOP;
+						stop();		
+						vTaskDelay(5);//5ms
+						countMs+=5;	
+						update_settings(&motor_settings);
+						vTaskDelay(5);//5ms
+						countMs+=5;	
+						start();
+						m_run_sta=MOTOR_MODE_START;							
 					}	
-				}
+					break;
+				case MOTOR_USART_GC_CONTROL:			
+					DEBUG_PRINTF( "gc ctrl motor \r\n");								
+					break;
+				case MOTOR_SETTING_ERR:
+					stop();
+					break;
+				default:
+					stop();
+					break;
 			}
-		}		
+			vTaskDelay(5);//5ms
+			countMs+=5;	
+		}
+		else
+		{
+			if(countMs%50==0) app_u_motor_get_sta_req();
+		}			
+		if(m_run_sta==m_run_stop)
+		{
+					
+		}	
+		else if(m_run_sta==m_run_genara)
+		{
+			customer_control();
+		}
+		else if(m_run_sta==m_run_cali_angle)
+		{
+			if(countS>cali_start_s+2)
+			{//2秒
+				app_u_motor_angle_cali_next();
+				m_run_sta = m_run_cali_current;
+				cali_index=0;
+				cali_start_s=countS;
+			}	
+		}
+		else if(m_run_sta==m_run_cali_current)
+		{	//100~2200RPM
+			if(countS>=cali_start_s+1)
+			{//1s
+				cali_start_s=countS;
+				//记录电流
+				//更换下一速度
+				DEBUG_PRINTF("cali spd=%d rpm\r\n",speed_list[cali_index]);
+				countMs=0;	
+				cali_index%=20;
+				app_u_motor_start(0, speed_list[cali_index]*1.0,4.0);
+				cali_index++;				
+				stop();	
+				if(cali_index==20)	
+				{
+					xSemaphoreGive(xSemaphoreCaliFinish);
+					m_run_sta = m_run_stop;
+				}	
+			}
+		}					
 		if(countMs>2000)
 		{//disconnect 	
 			countMs=0;
-			if(m_run_sta!=M_RUN_STOP )stop();
+			if(m_run_sta!=m_run_stop )stop();
 			vTaskDelay(10);	
 			app_u_motor_reset();
 			vTaskDelay(10);	

@@ -42,10 +42,45 @@ extern "C" {
 #ifndef LED_INDICATE_ENABLE
 #define LED_INDICATE_ENABLE
 #endif
+// *********************rtos**************/
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 
-#ifdef DEBUG_RTT
-#define DEBUG_RTT
+
+extern void vAppPeriodicTask( void * pvParameters );	
+extern void vAppMotorControlTask( void * pvParameters );
+extern void vAppMenuManageTask( void * pvParameters );
+extern void MenuDevicePowerOff(unsigned char feedDogFlag);
+extern void vTaskStart( void * pvParameters );
+
+extern TaskHandle_t  beepTemporaryTask_Handle;
+extern QueueHandle_t  xQueueMotorControlMessage;
+
+
+extern QueueHandle_t   xQueueMenuValue;
+extern QueueHandle_t  xQueueKeyMessage;//key
+extern QueueHandle_t  xQueueBeepMode;//beep
+extern QueueHandle_t  xQueueBatValue;//batValue
+extern QueueHandle_t  xQueueMotorControlMessage;
+
+
+	
+extern SemaphoreHandle_t xSemaphorePowerOff;
+extern SemaphoreHandle_t xSemaphoreCaliFinish;
+extern SemaphoreHandle_t xSemaphoreDispRfresh;
+///****************************/
+#ifndef DEBUG_RTT
+#define DEBUG_RTT /*use printf*/
+#if 1
 #include "SEGGER_RTT.h"
+#define DEBUG_PRINTF(fmt, ...)  SEGGER_RTT_printf(0,fmt, ##__VA_ARGS__)
+#else
+#define DEBUG_PRINTF(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#endif
+#else 
+#define DEBUG_PRINTF(fmt, ...) do { } while(0)
 #endif 
 #ifdef BLE_FUN
 #define BLE_FUN

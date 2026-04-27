@@ -226,10 +226,7 @@ int main(void)
 		ConfigSys_Timer(SYSTEM_TIME_BASE_MS,SYSTEM_CLOCK_FREQUENCY);//����ϵͳ��ʱTMR4ʱ��Ϊ5ms	
 #endif		
 		peripheral_init();
-#ifdef DEBUG_RTT 
-		SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
-		SEGGER_RTT_WriteString(0, "PDO-1\r\n");	
-#endif	
+		DEBUG_PRINTF( "PDO-1\r\n");		
 		start_para_write_read();
 		DeviceParamCheck();
 		DevicePowerOnSequence();		
