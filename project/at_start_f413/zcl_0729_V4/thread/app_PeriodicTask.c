@@ -34,7 +34,7 @@ void BatteryCapacityManage( unsigned int realTimeMs,unsigned int perTimeMs)
 	static unsigned int lowpowerCount;		
 	if(perTimeMs!=0&&realTimeMs%perTimeMs==0) 	
 	{
-		bat_AdcValue=get_vbat_value();
+		bat_AdcValue=get_vbat_value();		
 		if(bat_AdcValue<3000)
 		{
 			lowpowerCount+=perTimeMs;
@@ -89,9 +89,9 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 	static unsigned char recValue,sendBuff=MENU_LOGO_PAGE;	
 	if(perTimeMs!=0&&realTimeMs%perTimeMs==0)	
 	{
-		if(get_insert_state()==RESET) 
+		if(get_insert_state()==SET) 
 		{		
-			if(get_charge_state()==RESET)
+			if(get_charge_state()==SET)
 			{
 				value=BAT_STATUS_CHARGING;
 			}
@@ -103,8 +103,7 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 		else 
 		{			
 			value=BAT_STATUS_CHARGING_EXIT;
-		}	
-		value=BAT_STATUS_CHARGING_EXIT;//test
+		}		
 		if(recValue!=value)	 
 		{						
 			if(value==BAT_STATUS_CHARGING)

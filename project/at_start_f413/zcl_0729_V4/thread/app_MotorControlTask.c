@@ -268,8 +268,7 @@ void vAppMotorControlTask( void * pvParameters )
 				case MOTOR_MODE_SEARCH_ANGLE:
 					{
 						stop();	
-						vTaskDelay(5);//5ms
-						
+						vTaskDelay(5);//5ms						
 						#if 1
 						app_u_motor_angle_cali();
 						#else 
