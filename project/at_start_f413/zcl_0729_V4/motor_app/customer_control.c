@@ -4,7 +4,7 @@
 
 #include "gpio_port.h"
 #include "math.h"
-
+#include "para_list.h"
 
 #ifdef DEBUG_RTT
 #include "SEGGER_RTT.h"
@@ -32,8 +32,6 @@ MotorStatus_TypeDef motor_status;
 MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
-
-static float current_noLoad[20]={10,10,10,10,10,10,10,10,10,10,10,10,10};//100~2200
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
 unsigned short update_command ;
 unsigned char torque_reach(void);
@@ -49,33 +47,14 @@ void mode_select(enum EndoMode mode);//set working mode. 0:speed mode, 1: positi
   * @param  mode: EndoModePositionToggle or EndoModeSpeedAutoReverse
   * @retval None
 *****************************************************************************************/
-static float noload_current(float speed)
+static float noload_current(unsigned char spd_index)//mA
 {
 	// 300RPM  30mA
 	// 2000RPM 220mA
 	float ret_current;
-	if(speed<0)
-	{
-		if(speed>-50.0)
-		{
-			ret_current=-10;
-		}
-		else 
-		{
-			ret_current=(50.0-speed)*0.115;
-		}
-	}
-	else 
-	{
-		if(speed<50.0)
-		{
-			ret_current=10;
-		}
-		else 
-		{
-			ret_current=(speed-50.0)*0.115;
-		}
-	}
+	spd_index%=spd2500_Rpm_num;
+	ret_current =sys_param_un.device_param.m_noload_curretnRef[spd_index]*1.0;
+	
 	return ret_current;	
 }
 
@@ -103,7 +82,7 @@ void mode_select(enum EndoMode mode)
 *****************************************************************************************/
 void start()
 {
-	if(u_motor_sta_replay.sta.motor_state==0)  motor_status.status = Status_START;
+	motor_status.status = Status_START;
 }
 /*****************************stop the motor********************************************
   * @brief  stop the motor.
@@ -124,9 +103,10 @@ void stop(void)
 *****************************************************************************************/
 void set_torque_limit(float upper_limit, float lower_limit)
 {
+	unsigned short temp=(unsigned short)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 	if(lower_limit<0.4)		lower_limit = 0.4;	
-	upper_threshold = upper_limit *90;
-	lower_threshold = lower_limit *90;
+	upper_threshold = upper_limit *90+temp;
+	lower_threshold = lower_limit *90+temp;
 }
 void set_toggle_mode_speed(int speed)
 {
@@ -213,17 +193,30 @@ uint16_t get_position_angle(void)
   * @retval None
 *****************************************************************************************/
 
-void customer_control()
+void customer_control(void)
 {
 	static int delay_cnt = 0;	//
 	iq=u_motor_sta_replay.sta.current*1000;//mA
-	if(motor_settings.mode==EndoModePositionToggle)
-	{	
-		motor_status.reach_torque = toggle_torque_reach();			
-	}
-	else motor_status.reach_torque = torque_reach();	
 	
+	if(motor_settings.set_cali_index==0)
+	{//正在校准
+		if(motor_settings.mode==EndoModePositionToggle)
+		{	
+			motor_status.reach_torque = toggle_torque_reach();			
+		}
+		else motor_status.reach_torque = torque_reach();
+	}	
+	else motor_status.reach_torque=0;
 	//whether motor reach target torque	
+	if(motor_status.status ==Status_STOP)
+	{
+		delay_cnt++;
+		if(delay_cnt>30)
+		{
+			delay_cnt=0;
+			motor_status.status = Status_START;
+		}
+	}	
 	//往复模式	
 	if(motor_status.mode==EndoModePositionToggle)
 	{
@@ -305,8 +298,8 @@ void customer_control()
 		else if(motor_status.status == Status_REVERSE)
 		{				
 			if(motor_status.reach_torque == 2)   {									
-					motor_status.status = Status_FORWARD;	
-					app_u_motor_start(0, forward_speed,upper_threshold);					
+				motor_status.status = Status_FORWARD;	
+				app_u_motor_start(0, forward_speed,upper_threshold);					
 			}	
 		}							
 	}
@@ -432,12 +425,28 @@ unsigned short int GetRealTorque(void)
 {
 	unsigned  int retValue;
   	unsigned int torqueValue;
+	  unsigned short int tempIq;
 	static 	unsigned short int torqueValueBuff[4]={0};
 	static unsigned char num;
-	float c_current=noload_current(u_motor_sta_replay.sta.speed);
+	unsigned short int c_current;
+	//校准,
 	num++;
 	num%=4;
- 	torqueValueBuff[num]=(unsigned short int)(fabsf(iq-c_current)); 		
+	if(motor_settings.set_cali_index!=0)
+	{
+		sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=(unsigned short int)fabs(u_motor_sta_replay.sta.current*1000);//mA
+		if(sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]<10) sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=10;
+		if(sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]>250) sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=250;
+		
+		torqueValueBuff[num]=1;
+	}
+	else{
+	
+		c_current=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
+		tempIq=(unsigned short int)(fabsf(iq));
+		if(tempIq<c_current) torqueValueBuff[num]=0;
+		else  	torqueValueBuff[num]=tempIq-c_current;	
+	}	
 	#ifdef ZHX
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/36;//ZHX;10/(93*4);
 	#else

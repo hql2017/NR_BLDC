@@ -27,7 +27,6 @@ typedef union{
 #define m_run_stop         	0
 #define m_run_genara       	1
 #define m_run_cali_angle    2  //找初始角度
-#define m_run_cali_current  4  //找空载电流
 
 #define MOTOR_MINI_DELAY_TIME_MS  50
 

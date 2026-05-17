@@ -115,7 +115,8 @@ void MotorParamInit(void)
 	{					
 		motor_settings.upper_threshold=torque_list[motor_param_un.system_motor_pattern[useNum].torqueThresholdNum]*0.10f;			
 		motor_settings.lower_threshold=motor_settings.upper_threshold*0.6f;//60%		
-	}				
+	}	
+	motor_settings.set_cali_index=0;			
 	update_settings(&motor_settings);	
 }
 /**
@@ -191,26 +192,56 @@ unsigned char head1;
 	float position;
 	unsigned char check_sum;	
 	*/
+extern short forward_speed;
+extern short reverse_speed;
+extern unsigned short upper_threshold;		//iq upper threshold 
 void vAppMotorControlTask( void * pvParameters )
 {	
-	unsigned int countMs,countS,cali_index,cali_start_s;
+	unsigned int countMs,countS,cali_start_s;
 	unsigned char buff[6]={0};
 	U_MOTOR_CTR_MESSAGE u_ctr_rx_msg;
+	U_MOTOR_CTR_MESSAGE p_tx_msg;
 	BaseType_t m_ctr_sta;
+	BaseType_t m_ctr_tx_sta;
 	unsigned char m_run_sta=0,mStaLen;
+	unsigned char sendKeyMessage=run_button_release_signal;
+
+	motor_settings.set_cali_index=0;
 	for(;;)	
 	{	
 		vTaskDelay(10);	
 		countMs+=10;	
 		mStaLen=app_u_motor_rec_data();
 		if(mStaLen!=0)
-		{
+		{//正常通讯
 			if(countMs>=1000)
 			{
 				countMs=0;
 				countS++;											
 				DEBUG_PRINTF("1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
 			}	
+		}
+		else{
+			if(countMs>2000&&m_run_sta!=m_run_cali_angle)
+			{			
+				countMs=0;
+				countS+=2;
+				DEBUG_PRINTF("disconnnect timeout\r\n");
+				if(m_run_sta!=m_run_stop&&motor_settings.set_cali_index==0)
+				{
+					stop();
+					DEBUG_PRINTF("stop motor\r\n");
+					p_tx_msg.msg.cmdCode=MOTOR_MODE_STOP;
+					p_tx_msg.msg.cmdLen=0;	
+					m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+					if(m_ctr_tx_sta!=pdTRUE)		
+					{//resend
+						vTaskDelay(10);
+						xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 10);
+					}	
+					app_u_motor_reset();
+				}				
+			}
 		}		
 		m_ctr_sta = xQueueReceive(xQueueMotorControlMessage, buff, 0);
 		if(m_ctr_sta==pdTRUE)
@@ -225,21 +256,20 @@ void vAppMotorControlTask( void * pvParameters )
 					}
 				break;	
 				case MOTOR_MODE_START:
-					if(m_run_sta==MOTOR_MODE_STOP)
-					{ 
-						start();
+					if(m_run_sta==m_run_stop)
+					{ 						
 						m_run_sta=m_run_genara;
 					}
+					start();
 					break;
-				case MOTOR_SETTING_UPDATE:
+				case MOTOR_SETTING_UPDATE:				
 					update_settings(&motor_settings);
 					break;
 				case MOTOR_MODE_SEARCH_ANGLE:
 					{
-						m_run_sta=m_run_cali_angle;	
 						stop();	
 						vTaskDelay(5);//5ms
-						cali_start_s=0;	
+						
 						#if 1
 						app_u_motor_angle_cali();
 						#else 
@@ -247,18 +277,16 @@ void vAppMotorControlTask( void * pvParameters )
 						vTaskDelay(10); 
 						AppUsartMotorTransmit(U_MOTOR_ID_ENCODE_CALI,&sendBuff,0);
 						#endif	
+						m_run_sta=m_run_cali_angle;	
+						cali_start_s=countS;	
 					}
 					break;
 				case MOTOR_MODE_RESTART:					 
 					{
-						stop();		
-						vTaskDelay(5);//5ms
-						countMs+=5;	
 						update_settings(&motor_settings);
 						vTaskDelay(5);//5ms
-						countMs+=5;	
 						start();
-						m_run_sta=MOTOR_MODE_START;							
+						m_run_sta=m_run_genara;							
 					}	
 					break;
 				case MOTOR_USART_GC_CONTROL:			
@@ -270,9 +298,7 @@ void vAppMotorControlTask( void * pvParameters )
 				default:
 					stop();
 					break;
-			}
-			vTaskDelay(5);//5ms
-			countMs+=5;	
+			}					
 		}
 		else
 		{
@@ -280,50 +306,83 @@ void vAppMotorControlTask( void * pvParameters )
 		}			
 		if(m_run_sta==m_run_stop)
 		{
-					
+				
 		}	
 		else if(m_run_sta==m_run_genara)
 		{
-			customer_control();
+			customer_control();	
+			if(motor_settings.set_cali_index!=0)	
+			{//100~2200RPM
+				GetRealTorque();//自动存储
+				if(countS>cali_start_s+3)
+				{//运行4S
+					//save current,					
+					if(motor_settings.set_cali_index<=MAX_spd_Rpm_num)
+					{
+						DEBUG_PRINTF("cali spd=%d cur=%d\r\n",speed_list[motor_settings.set_cali_index-1],sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]);
+						p_tx_msg.msg.cmdCode=MOTOR_MODE_START;
+						p_tx_msg.msg.cmdLen=0;				
+						forward_speed=speed_list[motor_settings.set_cali_index-1];
+						reverse_speed=-speed_list[motor_settings.set_cali_index-1];
+						upper_threshold=360;
+						motor_status.mode=EndoModeSpeedForward;						
+						m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+						if(m_ctr_tx_sta!=pdTRUE)		
+						{//resend
+							vTaskDelay(10);
+							xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+						}	
+						cali_start_s=countS;
+						motor_settings.set_cali_index++;							
+					}
+					else {
+						stop();
+                        //恢复数据						
+						update_settings(&motor_settings);
+						vTaskDelay(10);
+						//停止转动
+						 sendKeyMessage=run_button_press_signal;		
+						xQueueSend(xQueueKeyMessage, &sendKeyMessage, 0);					
+						motor_settings.set_cali_index=0;
+						m_run_sta=m_run_stop;
+					}	
+				}			
+			}	
+			
 		}
 		else if(m_run_sta==m_run_cali_angle)
-		{
-			if(countS>cali_start_s+2)
-			{//2秒
-				app_u_motor_angle_cali_next();
-				m_run_sta = m_run_cali_current;
-				cali_index=0;
-				cali_start_s=countS;
+		{	
+			if(countMs>=1000)
+			{
+				countMs=0;
+				countS++;											
+				DEBUG_PRINTF("1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
 			}	
-		}
-		else if(m_run_sta==m_run_cali_current)
-		{	//100~2200RPM
-			if(countS>=cali_start_s+1)
-			{//1s
+			if(countS>cali_start_s+3)
+			{//4秒
 				cali_start_s=countS;
-				//记录电流
-				//更换下一速度
-				DEBUG_PRINTF("cali spd=%d rpm\r\n",speed_list[cali_index]);
-				countMs=0;	
-				cali_index%=20;
-				app_u_motor_start(0, speed_list[cali_index]*1.0,4.0);
-				cali_index++;				
-				stop();	
-				if(cali_index==20)	
-				{
-					xSemaphoreGive(xSemaphoreCaliFinish);
-					m_run_sta = m_run_stop;
-				}	
-			}
-		}					
-		if(countMs>2000)
-		{//disconnect 	
-			countMs=0;
-			if(m_run_sta!=m_run_stop )stop();
-			vTaskDelay(10);	
-			app_u_motor_reset();
-			vTaskDelay(10);	
-		}
+				app_u_motor_angle_cali_next();
+				stop();
+				motor_settings.set_cali_index=1;	
+				vTaskDelay(10);
+				p_tx_msg.msg.cmdCode=MOTOR_MODE_START;
+				p_tx_msg.msg.cmdLen=0;				
+				forward_speed=speed_list[0];
+				reverse_speed=-speed_list[0];
+				upper_threshold=360;
+				motor_status.mode=EndoModeSpeedForward;	
+				motor_status.mode=EndoModeSpeedForward;
+				vTaskDelay(10);			
+				m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+				if(m_ctr_tx_sta!=pdTRUE)		
+				{//resend
+					vTaskDelay(10);
+					xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+				}
+				xSemaphoreGive(xSemaphoreCaliFinish);	
+				m_run_sta=m_run_stop;
+			}	
+		}		
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MOTOR_CONTROL_TASK_EVENT_BIT);
 		#endif			

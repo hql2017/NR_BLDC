@@ -42,7 +42,30 @@ void default_para_write_buff(void)
 	sys_param_un.device_param.gc_ref_rate=690;//480;//670;//
 	sys_param_un.device_param.empty_rate=1000;//720;//1000;//no care
 	sys_param_un.device_param.apex_tine_400Value=2400;
-	}  
+	}
+	//<=600rpm
+	sys_param_un.device_param.m_noload_curretnRef[spd100_Rpm_num]=10;
+	sys_param_un.device_param.m_noload_curretnRef[spd150_Rpm_num]=10;
+	sys_param_un.device_param.m_noload_curretnRef[spd200_Rpm_num]=15;
+	sys_param_un.device_param.m_noload_curretnRef[spd250_Rpm_num]=20;
+	sys_param_un.device_param.m_noload_curretnRef[spd300_Rpm_num]=32;
+	sys_param_un.device_param.m_noload_curretnRef[spd350_Rpm_num]=35;
+	sys_param_un.device_param.m_noload_curretnRef[spd400_Rpm_num]=40;
+	sys_param_un.device_param.m_noload_curretnRef[spd450_Rpm_num]=50;
+	sys_param_un.device_param.m_noload_curretnRef[spd500_Rpm_num]=55;
+	sys_param_un.device_param.m_noload_curretnRef[spd550_Rpm_num]=60;
+	sys_param_un.device_param.m_noload_curretnRef[spd600_Rpm_num]=80;
+	sys_param_un.device_param.m_noload_curretnRef[spd800_Rpm_num]=100;
+	sys_param_un.device_param.m_noload_curretnRef[spd1000_Rpm_num]=130;
+	sys_param_un.device_param.m_noload_curretnRef[spd1200_Rpm_num]=160;
+	sys_param_un.device_param.m_noload_curretnRef[spd1500_Rpm_num]=180;
+	sys_param_un.device_param.m_noload_curretnRef[spd1800_Rpm_num]=180;
+	sys_param_un.device_param.m_noload_curretnRef[spd2000_Rpm_num]=180;
+	sys_param_un.device_param.m_noload_curretnRef[MAX_spd_Rpm_num]=180;//2200
+	sys_param_un.device_param.m_noload_curretnRef[18]=180;//2500
+	sys_param_un.device_param.m_noload_curretnRef[19]=180;//max
+
+
 	motor_param_un.system_motor_pattern[0].pNum=0;	
 	motor_param_un.system_motor_pattern[0].dir=DIR_FW;
 	motor_param_un.system_motor_pattern[0].motorSpeedNum=spd300_Rpm_num;
@@ -209,7 +232,7 @@ void start_para_write_read(void)
    flash_write(FLASH_SYSTEM_PARAM_ADDR, sys_param_un.para_buff, sizeof(Device_Param_Def)); 
    flash_write(FLASH_MOTOR_PARAM_ADDR,(uint16_t *)&motor_param_un.system_motor_pattern,11*sizeof(SYSTEM_MOTOR_PARAM));   
 
-		DEBUG_PRINTF("DO ONE WRITE\r\n",0);
+	DEBUG_PRINTF("DO ONE WRITE\r\n",0);
 
    flash_read(FLASH_SYSTEM_PARAM_ADDR, sys_param_un.para_buff, sizeof(Device_Param_Def));   
    flash_read(FLASH_MOTOR_PARAM_ADDR,(uint16_t *)&motor_param_un.system_motor_pattern,11*sizeof(SYSTEM_MOTOR_PARAM));

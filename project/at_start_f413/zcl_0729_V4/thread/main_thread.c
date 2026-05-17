@@ -15,6 +15,8 @@
 #include "macros.h"
 #include "delay.h"
 
+
+
 #include "key.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -37,11 +39,11 @@ TaskHandle_t  periodicTask_Handle; //��������
 #define APEX_GC_TASK_PRIORITY 	TASK_PRIORITY_MIDDLE
 TaskHandle_t  ApexGC_Task_Handle; //
 	
-#define MENU_MANAGE_STACK_DEPTH 256
+#define MENU_MANAGE_STACK_DEPTH 320
 #define MENU_MANAGE_TASK_PRIORITY 	TASK_PRIORITY_MIDDLE
 TaskHandle_t  menuManageTask_Handle; //��������	
 
-#define MOTOR_CONTROL_STACK_DEPTH 256 //128
+#define MOTOR_CONTROL_STACK_DEPTH 320 //128
 #define MOTOR_CONTROL_TASK_PRIORITY 	TASK_PRIORITY_MIDDLE
 TaskHandle_t  motorControlTask_Handle;
 	
@@ -1122,8 +1124,15 @@ void vAppKeyTask( void * pvParameters )
 		}
 		//handle  or send to key message queue		
 		if(sendKeyMessage!=null_signal)
-		{		
-			xQueueSend(xQueueKeyMessage, &sendKeyMessage, 0);			
+		{	
+			if(motor_settings.set_cali_index==0)	
+			{
+				xQueueSend(xQueueKeyMessage, &sendKeyMessage, 0);
+			}
+			else
+			{
+				//屏蔽按键控制，校准速度
+			} 			
 			if(sendKeyMessage!=power_off_signal)	
 			{
 				sendKeyMessage= BUZZER_MODE_BEEP;		
@@ -1417,7 +1426,7 @@ void vTaskStart( void * pvParameters )
 		xQueueKeyMessage =xQueueCreate(3,sizeof(uint16_t));	
 		xQueueBeepMode =	xQueueCreate(1,sizeof(uint8_t));
 		xQueueBatValue =	xQueueCreate(1,sizeof(unsigned short int));	
-		xQueueMenuValue = xQueueCreate(1,sizeof(uint8_t));
+		xQueueMenuValue = xQueueCreate(2,sizeof(uint8_t));
 		xQueueMotorControlMessage = xQueueCreate(4,6);
 	//Semaphore		
 		xSemaphorePowerOff=xSemaphoreCreateBinary() ; //power off		

@@ -54,9 +54,9 @@ typedef struct
 	float upper_threshold;		//iq upper threshold
 	float lower_threshold;
 	int toggle_mode_speed;
-	
+	unsigned char set_cali_index;	
 } MotorSettings_TypeDef;
-
+extern MotorSettings_TypeDef motor_settings;
 void start(void); //start the motr
 void stop(void);  //stop the motor
 void set_speed_slope(int rpmPerMs);
@@ -72,7 +72,7 @@ void update_settings(MotorSettings_TypeDef *setting);
 //
 extern void MotorDeviceReset(void);
 extern  unsigned short int GetRealTorque(void);
-
+extern void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI);
 
 
 

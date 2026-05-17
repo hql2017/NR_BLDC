@@ -39,7 +39,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\assert.h)(0x5E8E3CC2)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (..\at32f413_board\time_init.h)(0x663F0047)
 I (..\at32f413_board\at32f413_board.h)(0x69EF6F6D)
 I (..\FreeRTOS\Source\include\FreeRTOS.h)(0x6502CBCD)
@@ -61,8 +61,8 @@ I (..\middle_port\usart_port.h)(0x650936BE)
 I (..\middle_port\adc_port.h)(0x66835714)
 I (..\middle_port\gpio_port.h)(0x6735BD5C)
 I (..\thread\main_thread.h)(0x646EFF73)
-I (..\thread\app_MotorControlTask.h)(0x69EF5DEC)
-I (..\motor_app\customer_control.h)(0x69DB3739)
+I (..\thread\app_MotorControlTask.h)(0x6A095718)
+I (..\motor_app\customer_control.h)(0x6A097ED7)
 I (..\motor_app\delay.h)(0x6408532C)
 I (..\at32f413_board\wdt.h)(0x6476A6C3)
 I (..\middle_port\oled_port.h)(0x6736E78E)
@@ -141,7 +141,7 @@ I (..\..\..\..\libraries\drivers\inc\at32f413_usb.h)(0x62FEFD44)
 I (..\at32f413_board\adc_t.h)(0x63BBC31E)
 I (..\at32f413_board\uart_init.h)(0x6507ABAB)
 I (..\at32f413_board\base_time.h)(0x63E60615)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (..\middle_port\adc_port.h)(0x66835714)
 F (..\at32f413_board\time_init.c)(0x663F0022)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\time_init.o --omf_browse .\objects\time_init.crf --depend .\objects\time_init.d)
@@ -267,7 +267,7 @@ I (..\FreeRTOS\Source\include\semphr.h)(0x60FAEFBA)
 I (..\tool\RTT\SEGGER_RTT.h)(0x6437A533)
 I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 F (..\middle_port\gpio_port.c)(0x67356B9C)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\gpio_port.o --omf_browse .\objects\gpio_port.crf --depend .\objects\gpio_port.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
@@ -478,7 +478,7 @@ I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
 I (..\middle_port\key.h)(0x6736E78E)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 F (..\at32f413_board\at32f413_board.c)(0x6736E78E)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\at32f413_board.o --omf_browse .\objects\at32f413_board.crf --depend .\objects\at32f413_board.d)
 I (..\at32f413_board\at32f413_board.h)(0x69EF6F6D)
@@ -691,7 +691,7 @@ I (..\tool\RTT\SEGGER_RTT.h)(0x6437A533)
 I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 F (..\middle_port\app_queue.c)(0x6513D42F)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_queue.o --omf_browse .\objects\app_queue.crf --depend .\objects\app_queue.d)
 I (..\middle_port\app_queue.h)(0x6507AAE9)
 F (..\middle_port\usart_motor_bsp.c)(0x69EE1E8A)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\usart_motor_bsp.o --omf_browse .\objects\usart_motor_bsp.crf --depend .\objects\usart_motor_bsp.d)
@@ -747,11 +747,11 @@ I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
 I (..\middle_port\usart_motor_bsp.h)(0x69DCFB25)
-F (..\thread\main_thread.c)(0x69EF6B17)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\main_thread.o --omf_browse .\objects\main_thread.crf --depend .\objects\main_thread.d)
+F (..\thread\main_thread.c)(0x6A099D72)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\main_thread.o --omf_browse .\objects\main_thread.crf --depend .\objects\main_thread.d)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
 I (..\..\..\..\libraries\cmsis\cm4\device_support\at32f413.h)(0x6736E78E)
@@ -806,8 +806,8 @@ I (..\middle_port\gpio_port.h)(0x6735BD5C)
 I (..\middle_port\buzz_port.h)(0x644B806A)
 I (..\middle_port\apex_gc_port.h)(0x65264685)
 I (..\middle_port\adc_port.h)(0x66835714)
-I (..\thread\app_MotorControlTask.h)(0x69EF5DEC)
-I (..\motor_app\customer_control.h)(0x69DB3739)
+I (..\thread\app_MotorControlTask.h)(0x6A095718)
+I (..\motor_app\customer_control.h)(0x6A097ED7)
 I (..\motor_app\macros.h)(0x664EF1A0)
 I (..\motor_app\delay.h)(0x6408532C)
 I (..\middle_port\key.h)(0x6736E78E)
@@ -851,7 +851,7 @@ I (..\..\..\..\libraries\drivers\inc\at32f413_acc.h)(0x62FEFD3D)
 I (..\..\..\..\libraries\drivers\inc\at32f413_misc.h)(0x62FEFD41)
 I (..\..\..\..\libraries\drivers\inc\at32f413_usb.h)(0x62FEFD44)
 I (..\middle_port\oled_port.h)(0x6736E78E)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (..\at32f413_board\at32f413_board.h)(0x69EF6F6D)
 I (..\FreeRTOS\Source\include\FreeRTOS.h)(0x6502CBCD)
@@ -872,7 +872,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
 I (..\FreeRTOS\Source\include\event_groups.h)(0x646DE179)
 I (..\FreeRTOS\Source\include\timers.h)(0x60FAEFBA)
-F (..\thread\app_MotorControlTask.c)(0x69EF6FEC)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_motorcontroltask.o --omf_browse .\objects\app_motorcontroltask.crf --depend .\objects\app_motorcontroltask.d)
+F (..\thread\app_MotorControlTask.c)(0x6A09A0E0)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_motorcontroltask.o --omf_browse .\objects\app_motorcontroltask.crf --depend .\objects\app_motorcontroltask.d)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (..\inc\at32f413_conf.h)(0x63934106)
@@ -925,15 +925,15 @@ I (..\FreeRTOS\Source\include\semphr.h)(0x60FAEFBA)
 I (..\tool\RTT\SEGGER_RTT.h)(0x6437A533)
 I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
-I (..\thread\app_MotorControlTask.h)(0x69EF5DEC)
-I (..\motor_app\customer_control.h)(0x69DB3739)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\app_MotorControlTask.h)(0x6A095718)
+I (..\motor_app\customer_control.h)(0x6A097ED7)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (..\middle_port\usart_port.h)(0x650936BE)
 I (..\middle_port\usart_motor_bsp.h)(0x69DCFB25)
 I (..\FreeRTOS\Source\include\event_groups.h)(0x646DE179)
 I (..\FreeRTOS\Source\include\timers.h)(0x60FAEFBA)
-F (..\thread\app_MenuTask.c)(0x69EF6F6D)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_menutask.o --omf_browse .\objects\app_menutask.crf --depend .\objects\app_menutask.d)
+F (..\thread\app_MenuTask.c)(0x6A099C50)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_menutask.o --omf_browse .\objects\app_menutask.crf --depend .\objects\app_menutask.d)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
@@ -990,19 +990,19 @@ I (..\tool\RTT\SEGGER_RTT.h)(0x6437A533)
 I (..\tool\RTT\SEGGER_RTT_Conf.h)(0x6321DC7F)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5E8E3CC2)
 I (..\thread\app_MenuTask.h)(0x6476F522)
-I (..\thread\app_MotorControlTask.h)(0x69EF5DEC)
-I (..\motor_app\customer_control.h)(0x69DB3739)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\app_MotorControlTask.h)(0x6A095718)
+I (..\motor_app\customer_control.h)(0x6A097ED7)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (..\thread\app_user_storage.h)(0x6736E78E)
 I (..\middle_port\apex_gc_port.h)(0x65264685)
 I (..\at32f413_board\wdt.h)(0x6476A6C3)
 I (..\FreeRTOS\Source\include\event_groups.h)(0x646DE179)
 I (..\FreeRTOS\Source\include\timers.h)(0x60FAEFBA)
-F (..\thread\app_user_storage.c)(0x69EF5A16)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_user_storage.o --omf_browse .\objects\app_user_storage.crf --depend .\objects\app_user_storage.d)
+F (..\thread\app_user_storage.c)(0x6A096AFA)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\app_user_storage.o --omf_browse .\objects\app_user_storage.crf --depend .\objects\app_user_storage.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
 I (..\thread\app_user_storage.h)(0x6736E78E)
-I (..\thread\para_list.h)(0x6736E78E)
+I (..\thread\para_list.h)(0x6A097452)
 I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 I (..\..\..\..\libraries\cmsis\cm4\device_support\at32f413.h)(0x6736E78E)
 I (..\..\..\..\libraries\cmsis\cm4\core_support\core_cm4.h)(0x62FEFD2A)
@@ -1088,8 +1088,8 @@ I (..\..\..\..\libraries\drivers\inc\at32f413_acc.h)(0x62FEFD3D)
 I (..\..\..\..\libraries\drivers\inc\at32f413_misc.h)(0x62FEFD41)
 I (..\..\..\..\libraries\drivers\inc\at32f413_usb.h)(0x62FEFD44)
 F (..\..\..\..\libraries\cmsis\dsp\Lib\ARM\arm_cortexM4lf_math.lib)(0x6123151E)()
-F (..\motor_app\customer_control.c)(0x69EE1F1D)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\customer_control.o --omf_browse .\objects\customer_control.crf --depend .\objects\customer_control.d)
-I (..\motor_app\customer_control.h)(0x69DB3739)
+F (..\motor_app\customer_control.c)(0x6A099F98)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\customer_control.o --omf_browse .\objects\customer_control.crf --depend .\objects\customer_control.d)
+I (..\motor_app\customer_control.h)(0x6A097ED7)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
 I (..\motor_app\delay.h)(0x6408532C)
 I (..\middle_port\usart_motor_bsp.h)(0x69DCFB25)
@@ -1126,6 +1126,8 @@ I (..\..\..\..\libraries\drivers\inc\at32f413_acc.h)(0x62FEFD3D)
 I (..\..\..\..\libraries\drivers\inc\at32f413_misc.h)(0x62FEFD41)
 I (..\..\..\..\libraries\drivers\inc\at32f413_usb.h)(0x62FEFD44)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
+I (..\thread\para_list.h)(0x6A097452)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x5E8E3CC2)
 F (..\motor_app\delay.c)(0x67347076)(-c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\FreeRTOS -I ..\FreeRTOS\Source -I ..\FreeRTOS\Source\portable\RVDS\ARM_CM4F -I ..\..\..\..\libraries -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I ..\..\..\..\libraries\cmsis\cm4\core_support -I ..\..\..\..\libraries\cmsis\dsp -I ..\..\zcl_0729_V4 -I ..\middle_port -I ..\inc -I ..\at32f413_board -I ..\motor -I ..\motor_app -I ..\tool -I ..\src -I ..\..\..\..\libraries\drivers\src -I ..\..\..\..\libraries\drivers\inc -I .\lib -I ..\..\..\..\libraries\cmsis\cm4\device_support\startup\mdk -I ..\..\..\..\libraries\cmsis\cm4\device_support -I ..\thread -I .\objects -I .\listings -I ..\FreeRTOS\Source\include -I ..\tool\RTT-I.\RTE\_RHINO-Pro_bldc-IC:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\Packs\ArteryTek\AT32F413_DFP\2.1.8\Device\Include-D__UVISION_VERSION="541" -DAT32F413CCU7 -D_RTE_ -DAT32F413CCU7 -DUSE_STDPERIPH_DRIVER -DAT_START_F413_V1 -DAT_START_F413_V1 -D__CC_ARM -D__TARGET_FPU_VFP -D__FPU_PRESENT="1U" -DARM_MATH_CM4 -DDRIVE_BOARD-o .\objects\delay.o --omf_browse .\objects\delay.crf --depend .\objects\delay.d)
 I (..\motor_app\delay.h)(0x6408532C)
 I (..\inc\at32f413_clock.h)(0x639340E1)

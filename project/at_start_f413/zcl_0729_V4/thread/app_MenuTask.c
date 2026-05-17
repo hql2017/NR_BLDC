@@ -879,6 +879,11 @@ static void SubmenuCalibration(unsigned char flag)
 		OLED_ShowString(16,8,"AUTO CALIBRATION",16,1);
 		OLED_ShowString(0,40,"      FINISHED      ",16,1);
 	}
+	else if(flag==5) 
+	{
+		OLED_ShowString(16,8," CALIBRATING... ",16,1);		
+		OLED_ShowString(0,40,"  TURQUE 0 CALI     ",16,1);
+	}
 	else
 	{
 		OLED_ShowString(16,8,"AUTO CALIBRATION",16,1);
@@ -918,6 +923,8 @@ static  void SubmenuPageHandle(unsigned short int subPageID,unsigned short int s
 	error_status err;
 		unsigned  int 	timeout_cali=0;
 	static unsigned char secendNum,retCaliFanish=0;		
+	//start motor run
+	unsigned char sendKeyMessage=run_button_press_signal;
 //	static unsigned char motorOrApex=0;
 	//闂傚倸鍊搁崐鎼佸磹閹间礁纾归柟闂寸绾惧綊鏌熼梻瀵割槮缁炬儳缍婇弻鐔兼⒒鐎靛壊妲紒鐐劤缂嶅﹪寮婚悢鍏尖拻閻庨潧澹婂Σ顔剧磼閻愵剙鍔ょ紓宥咃躬瀵鎮㈤崗灏栨嫽闁诲酣娼ф竟濠偽ｉ鍓х＜闁绘劦鍓欓崝銈囩磽瀹ュ拑韬€殿喖顭烽幃銏ゅ礂鐏忔牗瀚介梺璇查叄濞佳勭珶婵犲伣锝夘敊閸撗咃紲闂佺粯鍔﹂崜娆撳礉閵堝洨纾界€广儱鎷戦煬顒傗偓娈垮枛椤兘骞冮姀銈呯閻忓繑鐗楃€氫粙姊虹拠鏌ュ弰婵炰匠鍕彾濠电姴浼ｉ敐澶樻晩闁告挆鍜冪床闂備胶绮崝锕傚礈濞嗘挸绀夐柕鍫濇缁♀偓闂侀€炲苯澧撮柡灞芥椤撳ジ宕ㄩ姘曞┑锛勫亼閸婃牜鏁幒妤€纾圭憸鐗堝笒閸氬綊鏌嶈閸撶喖寮婚敐鍡樺劅闁靛繒濮村В鍫ユ⒑閸涘﹦鎳冮柛鐕佸亰閹儳鐣￠幍顔芥闂佹悶鍎滅仦缁㈡％闂備浇顕ч崙鐣屽緤婵犳艾绀夐悗锝庘偓顖嗗吘鏃堝川椤旇瀚奸梻渚€娼荤€靛矂宕㈡總绋跨閻庯綆鍠楅悡鏇㈡煏婵炲灝鍔ょ紒澶庢閳ь剝顫夊ú姗€宕濆▎鎾崇畺婵炲棙鎸婚崐缁樹繆椤栨繃銆冮柣銏㈢帛缁绘繈鎮介棃娴躲垽鏌ㄩ弴妯衡偓婵嗙暦閺夋娼╂い鎴旀櫇閸犳牠宕洪埀顒併亜閹烘垵顏柛濠傜仛缁绘盯宕煎┑鍫滆檸闂佸搫顑囬崰鏍蓟閻旂⒈鏁婇柣鎾崇岸閸嬫捇骞栨笟鍥ㄦ櫔闂佹寧绻傚Λ娑€€呴悜鑺ュ€甸柨婵嗘噽娴犳盯鏌￠崪鍐М婵﹨娅ｇ槐鎺懳熼懡銈呭汲闂備礁婀遍埛鍫ュ磻婵犲洦鍋樻い鏇楀亾妤犵偛娲幃褔宕煎顓烆伜婵犵數鍋犻幓顏嗙礊閳ь剚銇勯銏╂█鐎规洘鍨块幃鈺冪磼濡厧骞堥梺鐟板悑閹矂宕伴弽顓熷€堕柨鏃堟暜閸嬫挾鎲撮崟顒傤槰濠电偠灏欓崰鏍ь嚕婵犳艾骞㈡俊銈咃工閹垿姊虹化鏇炲⒉闁靛洦鐩畷鎴﹀箻鐠囨煡鍞堕梺鍝勬川閸犳捇宕㈤幘缁樷拺闁告稑锕︾粻鎾绘倵濮樼厧澧寸€殿喗濞婇幃銏ゆ惞鐟欏嫸绱￠梻浣筋嚃閸ㄥ孩鎷呴梹鎰灊闂傚倷绀侀幖顐︽儔婵傜ǹ绐楅柡宥庡幖閽冪喖鏌涢妷顔煎闁哄懏绻堥弻宥堫檨闁告挻鐟╅、姘舵晲婢跺鈧攱銇勯幒鎴濃偓濠氼敊閺囥垺鈷戦柛鎾村絻娴滅偤鏌涢悩铏磳闁诡垰鐭傞獮鎺懳旀担鍝勫箰闂佽绻掗崑鐔烘兜閸洖纾婚柟鎯х－閺嗭箓鏌涢妷锝呭闁伙絿鍏樺缁樼瑹閳ь剟鍩€椤掑倸浠滈柤娲诲灡閺呭墎鈧數纭堕崑鎾舵喆閸曨剛锛涢梺鍛婎殔閸熷潡顢氶敐鍡欘浄閻庯絽鐏氶弲锝夋⒑缂佹ê濮夐柡浣规倐瀵娊顢曢敂鐣屽幗闂佺粯鏌ㄩ幗婊堟儗鐎ｎ喗鐓涢悘鐐额嚙婵倿鏌熼鈧粻鏍蓟閵娧€鍋撻敐搴″⒋婵＄虎鍣ｅ娲川婵犲嫧妲堥梺鎸庢磸閸婃牜绮嬪鍛牚闁割偆鍟块幏娲⒑閸涘﹦鈽夐柨鏇缁骞樼紒妯衡偓鍨叏濡厧甯跺褜鍣ｉ弻宥囩磼濡纾虫繝纰夌磿閸忔﹢宕洪敓鐘茬＜婵°倓绀侀娲⒒閸屾瑨鍏岄弸顏堟煛閸偄澧撮柟顔炬焿椤﹀綊鎸婂┑瀣叆闁哄洨鍋涢埀顒€缍婇幃鈥斥枎閹炬潙浠梺鎼炲劚濞层倝骞婇幇鐗堝剨闁割偁鍎查崐鐢告偡濞嗗繐顏紒鈧埀顒€鈹戦悩顐壕闂備緡鍓欑粔瀵哥不閻斿吋鐓欑紓浣靛灩閺嬫稓绱掗埀顒傗偓锝庡亖娴滄粓鏌熼崫鍕棞濞存粓绠栭幃妤€鈻撻崹顔界亪濠电偛鐨烽埀顒佸墯濞兼牗绻涘顔荤盎闁圭鍩栭妵鍕箻椤栨艾鈷夊銈呭椤ㄥ﹤顫忓ú顏勪紶闁靛鍎涢敐澶嬬厽婵°倕鍟埢鍫燁殽閻愭彃鏆ｉ柛銊╃畺楠炲洦鎷呴悷鎵处闂傚倷绶氶埀顒傚仜閼活垱鏅剁€电硶鍋撳▓鍨灈妞ゎ厾鍏橀獮鍐閵堝懎绐涙繝鐢靛Т鐎氼喛鍊村┑鐘茬棄閺夊簱鍋撹瀵板﹥绂掔€ｎ亞鏌堝銈嗙墱閸庢劙寮担琛″亾楠炲灝鍔氭い锔垮嵆閸╂盯骞嬮悩鐢碉紲闁诲函缍嗛崑鎺楀磿閵夆晜鐓曢幖娣灩婵秹鏌＄仦鍓ф创鐎殿噮鍣ｉ崺鈧い鎺戝閸嬶繝鏌嶉崫鍕櫧鐎规挷绶氶弻娑㈠箛閳轰礁顥嬮梺鍝勫暙閻楀棗顔忓┑鍥ヤ簻闁规崘娉涢弸搴ｇ磼娴ｈ棄鐓愬ǎ鍥э躬閹瑩顢旈崟銊ヤ壕闁哄稁鍘肩粻鏉课旈敐鍛殭缁炬崘顫夐妵鍕箛閸撲胶鏆犲銈庡亜閹虫﹢鐛幒妤佹優妞ゆ劑鍊ゅú绋库攽閻樿宸ラ柣妤€锕幃陇绠涢幙鍐數闂佺厧鎽滈弫鎼佸煡婢跺浜滈柍鍝勶工婢ф壆绱掓潏銊ユ诞闁诡喒鏅犻獮鍥ㄦ媴閸濆嫬楔缂傚倸鍊峰ù鍥ㄣ仈閸濄儲鏆滄俊銈傚亾妞ゎ厼娲╃粻娑樷槈濡壕鏅犻弻銊╁即濡も偓娴滈箖姊婚崒姘兼Ц缂佸鎳撻～蹇撁洪鍛画闂佸搫顦扮€笛傜昂闂傚倷鑳堕、濠傗枍閺囥垺鏅梻浣风串缁插潡宕楀鈧妴渚€寮撮姀鈩冩珖闂侀€炲苯澧扮紒顔肩墢閳ь剨缍嗛崜娑樜涢鐐寸厽婵°倐鍋撻柣鎿冨亰椤㈡棃宕ㄩ锝嗛敜闂備礁鎲￠幐鍡涘焵椤掑嫬纾婚柟鎹愵嚙缁€鍌氼熆鐠虹尨姊楀瑙勬礋濮婄粯鎷呴崨濠傛殘濠电偠顕滅粻鎾崇暦濠婂啠妲堥柕蹇曞Т閸嬪秹姊绘笟鍥у缂佸鏁婚崺娑㈠箣閿旇В鎷婚梺鍓插亞閸犳洟宕曢幇顔藉枑闁绘鐗嗙粭鎺旂棯閹呯Ш闁哄矉绻濆畷鍫曞煛娴ｉ攱鍩涢梻浣告惈濡酣宕愬┑瀣摕婵炴垯鍨归悞娲煕閹板吀绨村┑顔兼喘濮婅櫣绱掑Ο璇茬闂佸摜鍠愰幐鍐差嚕婵犳艾鍗抽柣鏃堫棑缁愮偛鈹戦悙鏉戠仧闁搞劍妞介、鎾愁吋閸滀焦瀵岄梺闈涚墕閸燁偊宕濆鑸电厽婵°倐鍋撶紒缁橈耿瀹曟椽鍩€椤掍降浜滈柟鐑樺灥閺嬨倖绻涢崗鐓庡缂佺粯鐩畷锝嗗緞濞戞壕鍋撻崸妤佺厸濞达絿枪閺嗭絽鈹戦鐟颁壕闂備線娼ч悧鍡涘疮閻樿纾婚柟鎯ь嚟閻熷綊鏌嶈閸撴瑩顢氶敐澶樻晪闁逞屽墴瀹曟椽鍩€椤掍降浜滈柟鐑樺灥椤忊晝绱掗悪鈧崹鍫曞蓟濞戞ǚ妲堟俊顖氬悑閹插ジ姊洪幎鑺ユ暠闁告梹鐟╁濠氭偄閸忚偐鍔烽梺鎸庢磵閸嬫挸顭胯缁垱绌辨繝鍥舵晝闁挎繂娲ㄩ悡澶娾攽椤旂》宸ユい顓炲槻閻ｇ兘骞掗幋鏃€鐎婚梺鐟扮摠缁诲倿鈥栨径鎰拺閻犲洤寮堕幑锝夋煟閻旂ǹ鈻曠€规洏鍔戦、娆撴偂鎼达絽鎼搁梻鍌氬€烽懗鑸电仚闂佸搫鐗滈崜娑㈠礆閹烘洜鐤€闁哄啠鍋撻柛娆忕箻閺屾盯骞囬鐘仦闂佽　鍋撳ù鐘差儐閻撴洟鎮橀悙鎻掆挃妞わ絾鐓￠弻娑㈡偄閸濆嫪妲愰梺鍝勭焿缂嶄線鐛幒妤€鍗抽柣鎰姈閹瑰洭寮婚弴銏犵倞鐟滃秹顢旈鐘亾濞堝灝鏋欑紒顔界懄娣囧﹤顫㈠畝濠冃ユ繝纰樻閸嬩線宕濆鍥ㄥ床婵炴垶鍩冮崑鎾斥槈濞嗘鍔烽梺娲诲幖椤戝洨妲愰幒妤婃晩闁兼亽鍎辩壕鎶芥⒑缂佹ü绶遍柛锝忕到椤曪絾绂掔€Ｑ€鍋撻弽顓炍ㄩ柕澶嗘櫅瀵澘顪冮妶鍐ㄧ仾妞ゃ劌锕畷娲焵椤掍降浜滈柟鐑樺灥椤忣亪鏌涙繝鍌涘仴闁哄矉缍侀獮瀣倻閸℃瑥濮虹紓鍌欒兌婵炩偓缂佺姵鐗犲璇测槈閵忊晜鏅濋梺闈涚墕閹冲繘鎮樻笟鈧鍝劽虹拠鎻掔闁汇埄鍨界换婵嗩嚕婵犳艾鐏崇€规洖娲﹀▓鏇㈡煟鎼搭垳绉甸柛鎾寸洴閺佸秹鎮㈤崫銉ь啎闁诲海鏁告灙妞ゅ孩鎸剧槐鎺楁偐閾忣偄纰嶉梺浼欑到閸㈡煡銈导鏉戝耿闁冲搫鍊愰鍫熲拻濞达絽鎲￠崯鐐烘偨椤栨侗娈樼紒顔界懇楠炲鏁愰崶锔捐兒闂傚倸鍊烽懗鍓佸垝椤栫偞鏅濋柕蹇曞閻掔晫鎲告惔锝囩焿闁圭儤顨嗛弲婵嬫煕鐏炲墽銆掗柛妯圭矙濮婅櫣绱掑Ο鑽ゅ弳閻庢鍠涘▔娑㈠煝瀹ュ宸濋悗娑欘焽閸樹粙姊洪幐搴ｇ畵婵炲眰鍊濆畷銏ゅ箻椤旂晫鍘靛銈嗘煥閹碱偊鎮橀鈧弻娑㈡偐鐠囇勬暰濠电偟鍘х换妯讳繆閹间焦鏅滈柣锝呰嫰缂嶅懘姊婚崒姘偓鎼佸磹妞嬪孩顐芥慨妯挎硾閻掑灚銇勯幒鎴濃偓鍛婄濠婂牊鐓犳繛鑼额嚙閻忥繝鏌￠崨顓烆暢闁逞屽墯缁嬫帟褰犳繛瀛樼矋缁捇寮婚弴锛勭杸濠电姴鍊搁埛澶婎渻閵堝啫鍔氶柣妤佹崌瀵鍩勯崘鈺侇€撻柣鐔哥懃鐎氼剛澹曢幎鑺モ拺閺夌偞澹嗛崝宥夋煙閻熺増鍠樼€殿噮鍋婇獮妯肩磼濡粯顏熼梻浣芥硶閸ｏ箓骞忛敓锟�
 	static unsigned int recSystemTime;
@@ -1086,20 +1093,32 @@ static  void SubmenuPageHandle(unsigned short int subPageID,unsigned short int s
 					xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);		
 					vTaskResume(WDT_ManageTask_Handle);																
 					#endif					
-					if(retCaliFanish==0)
-					{//	disp indicate	
-						SubmenuCalibration(4);		
-					}
-					else
-					{	//successful								
-						SubmenuCalibration(3);
-					}	
-					xSemaphoreGive(xSemaphoreDispRfresh);	
+										
 					MenuIdleTimeManage(systemTime,0);	
 					DeviceOffTimeManage(systemTime,0);							
 					#ifdef  APEX_FUNCTION_EBABLE							
 					xSemaphoreGive(xSemaphoreApexAutoCalibration);
 					#endif								
+					
+					timeout_cali=0;
+					while(xSemaphoreTake(xSemaphoreCaliFinish,0)==pdFALSE)	
+					{
+						xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);
+						vTaskDelay(MAX_WDT_FEED_TIME_MS);//wait wdt dog reset	
+						timeout_cali+=MAX_WDT_FEED_TIME_MS;
+						if(timeout_cali>6000) break;
+					}
+					if(retCaliFanish==0)
+					{//	disp indicate	
+						SubmenuCalibration(4);		
+					}
+					else
+					{	//successful
+						//start cali 								
+						SubmenuCalibration(3);
+					}	
+					SubmenuCalibration(5);//start torque current cali.
+					xSemaphoreGive(xSemaphoreDispRfresh);
 					#ifdef WDT_ENABLE																		
 					xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);
 					vTaskDelay(MAX_WDT_FEED_TIME_MS);//wait wdt dog reset							
@@ -1110,22 +1129,17 @@ static  void SubmenuPageHandle(unsigned short int subPageID,unsigned short int s
 					xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);	
 					#else
 					vTaskDelay(900);//wait wdt dog reset			
-					#endif	
-					timeout_cali=0;
-					while(xSemaphoreTake(xSemaphoreCaliFinish,0)==pdFALSE)	
-					{
-						
-						xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);
-						vTaskDelay(MAX_WDT_FEED_TIME_MS);//wait wdt dog reset	
-						timeout_cali+=MAX_WDT_FEED_TIME_MS;
-						if(timeout_cali>30000) break;
-					}										
+					#endif														
 					secendNum=4;//end								
 				}		
 				else
 				{					//wait idle tiem
 					signal=MENU_HOME_PAGE;//exit
 					xQueueSend(xQueueMenuValue, &signal, 0);
+                    vTaskDelay(50);//wait wdt dog reset
+					//start motor run
+					sendKeyMessage=run_button_press_signal;		
+					xQueueSend(xQueueKeyMessage, &sendKeyMessage, 0);	
 				}	
 				break;
 			case RESTORE_DEFAULT_SETTING:
@@ -3367,7 +3381,7 @@ void vAppMenuManageTask( void * pvParameters )
 					}		
 					else
 					{		
-            if(rec_Signal==add_button_press_signal||rec_Signal==sub_button_press_signal)	
+            			if(rec_Signal==add_button_press_signal||rec_Signal==sub_button_press_signal)	
 						{
 							if(submenuPageNum==SETTING_FOR)
 							{

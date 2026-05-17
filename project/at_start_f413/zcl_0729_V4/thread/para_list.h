@@ -24,17 +24,19 @@ typedef struct Param
 	uint16_t       apical_action_flag;        //到达根尖电机行动 0 不管 1 反转 2停止
 	uint16_t       auto_start_flag;           //根测控制电机自动启动 0 OFF 1 0N
 	uint16_t       auto_stop_flag;            //根测控制电机自动停止 0 OFF 1 0N
-	uint16_t        empty_rate;              
+	uint16_t       empty_rate;              
 	uint16_t       ref_tine;                  //预设根尖点位置 ,根尖偏移量，工程调试 	
 	uint16_t       apexFunctionLoad;          //根测线插入，加载根测功能	
 	uint16_t        gc_ref_rate;  //根尖参考比例值
 	uint16_t        apex_tine_400Value; //根尖参考值
+	uint16_t        m_noload_curretnRef[20];//空载参考电流mA（20个速度等级 100~2200rpm）   
+
 }Device_Param_Def;  
 
 union  Param_Union//所有参数均按照16位定义
 {
   Device_Param_Def device_param;
-  uint16_t para_buff[13];
+  uint16_t para_buff[23];
 };
 
 typedef struct {
