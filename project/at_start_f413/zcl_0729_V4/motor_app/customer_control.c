@@ -105,8 +105,8 @@ void set_torque_limit(float upper_limit, float lower_limit)
 {
 	unsigned short temp=(unsigned short)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 	if(lower_limit<0.4)		lower_limit = 0.4;	
-	upper_threshold = upper_limit *90+temp;
-	lower_threshold = lower_limit *90+temp;
+	upper_threshold = upper_limit *130+temp;
+	lower_threshold = lower_limit *130+temp;
 }
 void set_toggle_mode_speed(int speed)
 {
@@ -200,7 +200,7 @@ void customer_control(void)
 	
 	if(motor_settings.set_cali_index==0)
 	{//正在校准
-		if(motor_settings.mode==EndoModePositionToggle)
+		if(motor_status.mode==EndoModePositionToggle)
 		{	
 			motor_status.reach_torque = toggle_torque_reach();			
 		}
@@ -430,7 +430,7 @@ unsigned short int GetRealTorque(void)
 	static unsigned char num;
 	unsigned short int c_current;
 	//校准,
-	num++;
+	
 	num%=4;
 	if(motor_settings.set_cali_index!=0)
 	{
@@ -447,8 +447,9 @@ unsigned short int GetRealTorque(void)
 		if(tempIq<c_current) torqueValueBuff[num]=0;
 		else  	torqueValueBuff[num]=tempIq-c_current;	
 	}	
+	num++;
 	#ifdef ZHX
-	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/36;//ZHX;10/(93*4);
+	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//ZHX;10/(93*4);
 	#else
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//10/(130*4);
 	#endif

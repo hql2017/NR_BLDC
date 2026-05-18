@@ -253,6 +253,9 @@ void vAppMotorControlTask( void * pvParameters )
 					{
 						stop();
 						m_run_sta=m_run_stop;
+						if(motor_settings.set_cali_index!=0){
+							motor_settings.set_cali_index=0;//异常停止
+						}
 					}
 				break;	
 				case MOTOR_MODE_START:
