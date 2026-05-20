@@ -882,7 +882,7 @@ static void SubmenuCalibration(unsigned char flag)
 	else if(flag==5) 
 	{
 		OLED_ShowString(16,8," CALIBRATING... ",16,1);		
-		OLED_ShowString(0,40,"  TURQUE 0 CALI     ",16,1);
+		OLED_ShowString(0,40,"  TURQUE   CALI     ",16,1);
 	}
 	else
 	{
