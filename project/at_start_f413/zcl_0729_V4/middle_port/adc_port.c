@@ -5,12 +5,10 @@
 #include "adc_port.h"
 
 
-#ifdef APEX_FUNCTION_EBABLE	
-
+#ifdef  APEX_FUNCTION_EBABLE 
 #define VALUE_8K_SEQUENCE  1
 #define VALUE_400_SEQUENCE  2
 #define VBAT_SEQUENCE  3
-
 uint16_t adc1_ordinary_valuetab[64]= {0};
 static uint32_t adc_value[4] = {0};
 #else
@@ -72,18 +70,18 @@ static void ADC_gpio_config(void)
 {
 		gpio_init_type gpio_initstructure;
 	
-	#ifdef APEX_FUNCTION_EBABLE	
+	#ifdef  APEX_FUNCTION_EBABLE	
 	
 		crm_periph_clock_enable(APEX_8K_CLOCK, TRUE);
 		gpio_default_para_init(&gpio_initstructure);//8k
-		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£Äâ
+		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£ï¿½ï¿½
 		gpio_initstructure.gpio_pins = APEX_8K_IO;
 		gpio_initstructure.gpio_pull = GPIO_PULL_NONE;
 		gpio_init(APEX_8K_PORT, &gpio_initstructure);	
 		
 		crm_periph_clock_enable(APEX_400_CLOCK, TRUE);
 		gpio_default_para_init(&gpio_initstructure);//400HZ
-		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£Äâ
+		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£ï¿½ï¿½
 		gpio_initstructure.gpio_pins = APEX_400_IO;
 		gpio_initstructure.gpio_pull = GPIO_PULL_NONE;
 		gpio_init(APEX_400_PORT, &gpio_initstructure);	
@@ -92,7 +90,7 @@ static void ADC_gpio_config(void)
 	
 		crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
 		gpio_default_para_init(&gpio_initstructure);//Vbat
-		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£Äâ
+		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£ï¿½ï¿½
 		gpio_initstructure.gpio_pins = GPIO_PINS_3;
 		gpio_initstructure.gpio_pull = GPIO_PULL_NONE;
 		gpio_init(GPIOA, &gpio_initstructure);	
@@ -100,7 +98,7 @@ static void ADC_gpio_config(void)
 
 //		crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
 //		gpio_default_para_init(&gpio_initstructure);//VBUS 9V
-//		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£Äâ
+//		gpio_initstructure.gpio_mode = GPIO_MODE_ANALOG;//Ä£ï¿½ï¿½
 //		gpio_initstructure.gpio_pins = GPIO_PINS_4;
 //		gpio_initstructure.gpio_pull = GPIO_PULL_NONE;
 //		gpio_init(GPIOA, &gpio_initstructure);		
@@ -148,16 +146,24 @@ static void ADC_Init(void)
 		adc_combine_mode_select(ADC_INDEPENDENT_MODE);
 		adc_base_default_para_init(&adc_base_struct);	
 		adc_base_struct.data_align =ADC_RIGHT_ALIGNMENT;
-		adc_base_struct.ordinary_channel_length = 3;//4;//Í¨µÀÊýÁ¿
-		adc_base_struct.repeat_mode =TRUE;//FALSE;//TRUE;//adcÖØ¸´Ä£Ê½,×Ô¶¯×ª»»
-		adc_base_struct.sequence_mode = TRUE;//µ¥Ò»Í¨µÀflase£¬¶à¸öÍ¨µÀture
+		#ifdef APEX_FUNCTION_EBABLE	
+		adc_base_struct.ordinary_channel_length = 3;//
+		adc_base_struct.repeat_mode =TRUE;//FALSE;//TRUE;//
+		adc_base_struct.sequence_mode = TRUE;
 		adc_base_config(ADC1, &adc_base_struct);
 		adc_ordinary_channel_set(ADC1, ADC_CHANNEL_1, VALUE_8K_SEQUENCE , ADC_SAMPLETIME_239_5);  //8k
 		adc_ordinary_channel_set(ADC1, ADC_CHANNEL_2, VALUE_400_SEQUENCE , ADC_SAMPLETIME_239_5);  //400
 		adc_ordinary_channel_set(ADC1, ADC_CHANNEL_3, VBAT_SEQUENCE , ADC_SAMPLETIME_239_5); //vbat
 //	adc_ordinary_channel_set(ADC1, ADC_CHANNEL_4, 4, ADC_SAMPLETIME_239_5);  //vbus
+		#else adc_base_struct.ordinary_channel_length = 1;//
+		adc_base_struct.repeat_mode =TRUE;//FALSE;//TRUE;//
+		adc_base_struct.sequence_mode = TRUE;
+		adc_base_config(ADC1, &adc_base_struct);
 
-		adc_ordinary_conversion_trigger_set(ADC1, ADC12_ORDINARY_TRIG_SOFTWARE, TRUE);//Èí¼þ×Ô¶¯´¥·¢
+		adc_ordinary_channel_set(ADC1, ADC_CHANNEL_3, VBAT_SEQUENCE , ADC_SAMPLETIME_239_5); //vbat
+		//	adc_ordinary_channel_set(ADC1, ADC_CHANNEL_4, 4, ADC_SAMPLETIME_239_5);  //vbus
+		#endif
+		adc_ordinary_conversion_trigger_set(ADC1, ADC12_ORDINARY_TRIG_SOFTWARE, TRUE);
 		adc_dma_mode_enable(ADC1, TRUE);
 
 		adc_enable(ADC1, TRUE);
@@ -190,11 +196,11 @@ void start_adc_acquisition(void)
 	unsigned int timeOut;
 	timeOut=0;
 	ADC_gpio_config();
-  ADC_DMA_Init();
-  ADC_Init();
+	ADC_DMA_Init();
+	ADC_Init();
 	adc_trans_complete_flag=0;
 	adc_ordinary_software_trigger_enable(ADC1,TRUE);
-  while(adc_trans_complete_flag == 0)
+	while(adc_trans_complete_flag == 0)
 	{
 		timeOut++;
 		if(timeOut>144000) break;
@@ -204,7 +210,7 @@ void start_adc_acquisition(void)
 
 #ifdef APEX_FUNCTION_EBABLE	
 
-static unsigned   int LevelValue(unsigned char chanel)//Çó¾ùÖµ
+static unsigned   int LevelValue(unsigned char chanel)//ï¿½ï¿½ï¿½Öµ
 {
   unsigned int ret=0,temp=0;
   unsigned char j;
@@ -231,7 +237,7 @@ static unsigned   int LevelValue(unsigned char chanel)//Çó¾ùÖµ
 //	{
 //		timeout++;
 //		if(timeout>144000) break;//3ms	
-//	}//µÈ´ýÉÏÂÖ²É¼¯Íê³É
+//	}//ï¿½È´ï¿½ï¿½ï¿½ï¿½Ö²É¼ï¿½ï¿½ï¿½ï¿½
 
 }
 
@@ -244,7 +250,7 @@ unsigned char fresh_adc_value(void)
 {
 	unsigned char ret;	
 	ret=0;
-	if(adc_trans_complete_flag!=0)//())//±£´æÉÏ´Î²É¼¯Öµ
+	if(adc_trans_complete_flag!=0)//())//ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Î²É¼ï¿½Öµ
 	{	
 		ret=1;	
 		adc_value[0]=LevelValue(VALUE_8K_SEQUENCE );//8k
@@ -302,7 +308,7 @@ unsigned short int get_v_motor_value(void)
 	return batValue;
 }
 #else
-static unsigned   int LevelValue(unsigned char chanel)//Çó¾ùÖµ
+static unsigned   int LevelValue(unsigned char chanel)//ï¿½ï¿½ï¿½Öµ
 {
   unsigned int temp=0;
   unsigned   int ret,j;
@@ -310,7 +316,7 @@ static unsigned   int LevelValue(unsigned char chanel)//Çó¾ùÖµ
 	{			
 		for(j=0;j<16;j++)
 		{
-			temp+=adc1_ordinary_valuetab[j*4];
+			temp+=adc1_ordinary_valuetab[j*2];
 		}		
 		ret=temp>>4;	
 	}
@@ -318,7 +324,7 @@ static unsigned   int LevelValue(unsigned char chanel)//Çó¾ùÖµ
 	{		
 		for(j=0;j<16;j++)
 		{
-			temp+=adc1_ordinary_valuetab[j*4+1];
+			temp+=adc1_ordinary_valuetab[j*2+1];
 		}		
 		ret=temp>>4;
 	}	

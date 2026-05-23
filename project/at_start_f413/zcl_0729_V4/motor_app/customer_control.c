@@ -18,9 +18,9 @@
 extern uint8_t menu_motor_run_mode; 
 //*****************************
 unsigned short status_mp6570 = 0;
- short forward_speed; 
- short reverse_speed;
- short toggle_speed;
+ int forward_speed; 
+ int reverse_speed;
+ int toggle_speed;
 int	forward_position;
 int reverse_position;
 unsigned short upper_threshold;		//iq upper threshold
@@ -82,6 +82,7 @@ void mode_select(enum EndoMode mode)
 *****************************************************************************************/
 void start()
 {
+	u_motor_sta_replay.sta.current=0;
 	motor_status.status = Status_START;
 }
 /*****************************stop the motor********************************************
@@ -92,7 +93,8 @@ void start()
 void stop(void)
 {	
 	app_u_motor_stop();
-	motor_status.status = Status_STOP;		
+	motor_status.status = Status_STOP;
+	u_motor_sta_replay.sta.current=0;		
 }
 
 /*****************************set torque limit in speed mode*****************************
@@ -425,12 +427,11 @@ unsigned short int GetRealTorque(void)
 {
 	unsigned  int retValue;
   	unsigned int torqueValue;
-	  unsigned short int tempIq;
-	static 	unsigned short int torqueValueBuff[4]={0};
+	unsigned short int tempIq;
+	static 	unsigned short int torqueValueBuff[5]={0};//4滤波值
 	static unsigned char num;
-	unsigned short int c_current;
-	//校准,
-	
+	unsigned char tIndex;
+	unsigned short int c_current;	
 	num%=4;
 	if(motor_settings.set_cali_index!=0)
 	{
@@ -440,19 +441,23 @@ unsigned short int GetRealTorque(void)
 		
 		torqueValueBuff[num]=1;
 	}
-	else{
-	
+	else {
 		c_current=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 		tempIq=(unsigned short int)(fabsf(iq));
 		if(tempIq<c_current) torqueValueBuff[num]=0;
-		else  	torqueValueBuff[num]=tempIq-c_current;	
+		else torqueValueBuff[num]=tempIq-c_current;
 	}	
-	num++;
 	#ifdef ZHX
-	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//ZHX;10/(93*4);
+	torqueValueBuff[4]=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;
+	torqueValue=(unsigned short int)(torqueValueBuff[num]*0.07843);
+	if(torqueValue+2>torqueValueBuff[4]||torqueValue<2+torqueValueBuff[4])
+	{
+		torqueValue=torqueValueBuff[4]; 
+	}
 	#else
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//10/(130*4);
 	#endif
+	num++;	
 	retValue=torqueValue;	
 	return retValue;
 }

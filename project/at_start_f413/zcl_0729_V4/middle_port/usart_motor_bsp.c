@@ -170,13 +170,14 @@ void app_u_motor_angle_cali(void )
   vTaskDelay(10); 
 	AppUsartMotorTransmit(U_MOTOR_ID_ENCODE_CALI,&sendBuff,0);
 }
-void app_u_motor_angle_cali_next(void )
+void app_u_motor_angle_cali_next(void)
 {
   unsigned char sendBuff=0;
   sendBuff=0x06;
   AppUsartMotorTransmit(0x08,&sendBuff,1);//转速比6：1
-  vTaskDelay(10);
+ vTaskDelay(20);
   AppUsartMotorTransmit(0x1A,&sendBuff,0);//电角度自动微调
+
   vTaskDelay(100);
   AppUsartMotorTransmit(U_MOTOR_ID_GENE_WORK_ENABLE,&sendBuff,0);//回复正常模式
 }
@@ -390,7 +391,6 @@ void USART3_IRQHandler(void)
 	if(usart_flag_get(USART3, USART_IDLEF_FLAG) != RESET)       
 	{		
 		usart_flag_clear (USART3, USART_IDLEF_FLAG);
-		
 	}	
 }
 

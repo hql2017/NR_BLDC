@@ -71,7 +71,7 @@ extern SemaphoreHandle_t xSemaphorePowerOff;
 extern SemaphoreHandle_t xSemaphoreCaliFinish;
 extern SemaphoreHandle_t xSemaphoreDispRfresh;
 ///****************************/
-#ifdef DEBUG_RTT
+#ifndef DEBUG_RTT
 #define DEBUG_RTT /*use printf*/
 #if 1
 #include "SEGGER_RTT.h"
@@ -115,10 +115,10 @@ extern SemaphoreHandle_t xSemaphoreDispRfresh;
 	#define MAX_WDT_FEED_TIME_MS    300
 #endif 
 
-#define SYSTEM_CLOCK_FREQUENCY  200000000U//ϵͳʱ��Ƶ��
-#define SYSTEM_TIME_BASE_MS 5U//ϵͳʱ�Ӽ�����λms
+#define SYSTEM_CLOCK_FREQUENCY  200000000U
+#define SYSTEM_TIME_BASE_MS 5U
 
-#ifndef  APEX_FUNCTION_EBABLE //����һPDO-pro
+#ifndef  APEX_FUNCTION_EBABLE 
 #define  APEX_FUNCTION_EBABLE  
 #define  APEX_GC_IN    0
 #define  APEX_GC_EXIT    1
@@ -142,6 +142,7 @@ extern SemaphoreHandle_t xSemaphoreDispRfresh;
 #define  APEX_400_CLOCK  CRM_GPIOA_PERIPH_CLOCK
 #define  APEX_400_PORT   GPIOA
 #define  APEX_400_IO     GPIO_PINS_2
+
 
 #endif
 /** @defgroup BOARD_pins_definition 

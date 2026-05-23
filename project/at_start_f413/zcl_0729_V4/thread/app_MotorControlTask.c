@@ -54,7 +54,6 @@ typedef struct
   */
 void MOTOR_150US_Callback(void)//100usĿǰ�е����⣬��Ϊ150us
 {	
-		
 	motorErrHeatBeat=0;		
 }
 /**
@@ -192,8 +191,8 @@ unsigned char head1;
 	float position;
 	unsigned char check_sum;	
 	*/
-extern short forward_speed;
-extern short reverse_speed;
+extern int  forward_speed;
+extern int reverse_speed;
 extern unsigned short upper_threshold;		//iq upper threshold 
 void vAppMotorControlTask( void * pvParameters )
 {	
@@ -218,7 +217,7 @@ void vAppMotorControlTask( void * pvParameters )
 			{
 				countMs=0;
 				countS++;											
-				DEBUG_PRINTF("1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
+				DEBUG_PRINTF("1s iq=%.3fA spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
 			}	
 		}
 		else{
@@ -266,7 +265,7 @@ void vAppMotorControlTask( void * pvParameters )
 					start();
 					break;
 				case MOTOR_SETTING_UPDATE:				
-					update_settings(&motor_settings);
+					if(motor_settings.set_cali_index==0)update_settings(&motor_settings);
 					break;
 				case MOTOR_MODE_SEARCH_ANGLE:
 					{
@@ -360,10 +359,10 @@ void vAppMotorControlTask( void * pvParameters )
 				countS++;											
 				DEBUG_PRINTF("1s iq=%.3fA  spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
 			}	
-			if(countS>cali_start_s+3)
+			if(countS>cali_start_s+2)
 			{//4秒
 				cali_start_s=countS;
-				app_u_motor_angle_cali_next();
+				app_u_motor_angle_cali_next();				
 				stop();
 				motor_settings.set_cali_index=1;	
 				vTaskDelay(10);
@@ -372,7 +371,6 @@ void vAppMotorControlTask( void * pvParameters )
 				forward_speed=speed_list[0];
 				reverse_speed=-speed_list[0];
 				upper_threshold=360;
-				motor_status.mode=EndoModeSpeedForward;	
 				motor_status.mode=EndoModeSpeedForward;
 				vTaskDelay(10);			
 				m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
@@ -380,7 +378,7 @@ void vAppMotorControlTask( void * pvParameters )
 				{//resend
 					vTaskDelay(10);
 					xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
-				}
+				}				
 				xSemaphoreGive(xSemaphoreCaliFinish);	
 				m_run_sta=m_run_stop;
 			}	
