@@ -40,6 +40,7 @@ void BatteryCapacityManage( unsigned int realTimeMs,unsigned int perTimeMs)
 			lowpowerCount+=perTimeMs;
 			if(lowpowerCount>100)//100ms100)//500)//2s
 			{
+
 				if(sendMessage!=low_power_signal)
 				{
 					sendMessage=low_power_signal;
@@ -91,7 +92,7 @@ void InsertStatusMonitor(  unsigned int realTimeMs,unsigned int perTimeMs)
 	{
 		if(get_insert_state()==SET) 
 		{		
-			if(get_charge_state()==SET)
+			if(get_charge_state()==RESET)
 			{
 				value=BAT_STATUS_CHARGING;
 			}

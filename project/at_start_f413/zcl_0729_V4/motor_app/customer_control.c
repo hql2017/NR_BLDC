@@ -19,6 +19,8 @@
 extern uint8_t menu_motor_run_mode; 
 //*****************************
 unsigned short status_mp6570 = 0;
+
+int undata_speed; 
  int forward_speed; 
  int reverse_speed;
  int toggle_speed;
@@ -34,7 +36,7 @@ MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
-unsigned short update_command ;
+
 unsigned char torque_reach(void);
 unsigned char toggle_torque_reach(void);
 void set_torque_limit(float upper_limit, float lower_limit); //set torque limit in speed mode 
@@ -107,8 +109,8 @@ void set_torque_limit(float upper_limit, float lower_limit)
 {
 	unsigned short temp=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 	if(lower_limit<0.4)		lower_limit = 0.4;	
-	upper_threshold = upper_limit *130+temp;
-	lower_threshold = lower_limit *130+temp;
+	upper_threshold = upper_limit *190+temp;
+	lower_threshold = lower_limit *190+temp;
 }
 void set_toggle_mode_speed(int speed)
 {
@@ -209,13 +211,13 @@ void customer_control(void)
 	}	
 	else motor_status.reach_torque=0;
 	//whether motor reach target torque	
-	if(motor_status.status ==Status_STOP)
+	if(motor_status.status != Status_STOP&&u_motor_sta_replay.sta.motor_state!=0)
 	{
 		delay_cnt++;
-		if(delay_cnt>30)
+		if(delay_cnt>10)//50*10=500ms
 		{
 			delay_cnt=0;
-			motor_status.status = Status_START;
+			//motor_status.status = Status_START;
 		}
 	}	
 	//往复模式	
@@ -223,26 +225,27 @@ void customer_control(void)
 	{
 		if(motor_status.status == Status_START)	{					
 			if(forward_position+reverse_position<0){
-				motor_status.status = Status_REVERSE;
-				app_u_motor_start(2, -toggle_speed,upper_threshold);
+				motor_status.status = Status_REVERSE;				
+				undata_speed=	-toggle_speed;
+
 			}
 			else {
-				motor_status.status = Status_FORWARD;
-				app_u_motor_start(2, toggle_speed,upper_threshold);
+				motor_status.status = Status_FORWARD;				
+				undata_speed=toggle_speed;
 			}
 		}
 		if(motor_status.status == Status_FORWARD)	{			
 				if(motor_status.reach_torque == 2){					
 					if(forward_position+reverse_position<0)
 					{
-						motor_status.status = Status_REVERSE;
-						app_u_motor_start(0, -toggle_speed,upper_threshold);
+						motor_status.status = Status_REVERSE;						
+						undata_speed=	-toggle_speed;
 					}					
 				}
 				else if(motor_status.reach_torque == 1){	
 					if(forward_position+reverse_position>0){
-						motor_status.status = Status_REVERSE;
-						app_u_motor_start(0, -toggle_speed,upper_threshold);
+						motor_status.status = Status_REVERSE;						
+						undata_speed=	-toggle_speed;
 					}					
 				}			
 		}
@@ -251,58 +254,57 @@ void customer_control(void)
 					if(forward_position+reverse_position>0)
 					{
 						motor_status.status = Status_FORWARD;
-						app_u_motor_start(0, toggle_speed,upper_threshold);
+						
+						undata_speed=	toggle_speed;
 					}					
 				}
 				else if(motor_status.reach_torque == 1){	
 					if(forward_position+reverse_position<0){
-						motor_status.status = Status_FORWARD;
-						app_u_motor_start(0, toggle_speed,upper_threshold);
+						motor_status.status = Status_FORWARD;				
+						undata_speed=	toggle_speed;
 					}					
 				}			
 		}
 	}		
 	else if(motor_status.mode == EndoModeSpeedReverse)
 	{	//speed Reverse	
-		
 		if(motor_status.status == Status_START)	{	
-			motor_status.status = Status_REVERSE;
-			app_u_motor_start(0, reverse_speed,upper_threshold);	
+			motor_status.status = Status_REVERSE;			
+			undata_speed=	reverse_speed;
 		}
 		else if(motor_status.status == Status_REVERSE)
 		{			
 			if(motor_status.reach_torque == 1)   {															
-				motor_status.status = Status_FORWARD;	
-				app_u_motor_start(0, -reverse_speed,upper_threshold);			
+				motor_status.status = Status_FORWARD;					
+				undata_speed=	-reverse_speed;			
 			}				
 		}
 		else if(motor_status.status == Status_FORWARD)
 		{				
 			if(motor_status.reach_torque == 2)   {									
-				motor_status.status = Status_REVERSE;	
-				app_u_motor_start(0, reverse_speed,upper_threshold);					
+				motor_status.status = Status_REVERSE;					
+				undata_speed=	reverse_speed;					
 			}	
-			
 		}						
 	}	
 	else if(motor_status.mode==EndoModeSpeedForward)
 	{	 //speed Forward
 		if(motor_status.status == Status_START)	{	
-			motor_status.status = Status_FORWARD;
-			app_u_motor_start(0, forward_speed,upper_threshold);	
+			motor_status.status = Status_FORWARD;			
+			undata_speed=	forward_speed;	
 		}
 		else if(motor_status.status == Status_FORWARD)
 		{			
 			if(motor_status.reach_torque == 1)   {											
 				motor_status.status = Status_REVERSE;	
-				app_u_motor_start(0, -forward_speed,upper_threshold);				
+				undata_speed=	-forward_speed;					
 			}			
 		}
 		else if(motor_status.status == Status_REVERSE)
 		{				
 			if(motor_status.reach_torque == 2)   {									
 				motor_status.status = Status_FORWARD;	
-				app_u_motor_start(0, forward_speed,upper_threshold);					
+				undata_speed =	forward_speed;						
 			}	
 		}							
 	}
@@ -310,7 +312,7 @@ void customer_control(void)
 	{	//keep Forward
 		if(motor_status.status == Status_START)	{	
 			motor_status.status = Status_FORWARD;
-			app_u_motor_start(0, forward_speed,upper_threshold);	
+			undata_speed=	forward_speed;		
 		}
 		else if(motor_status.status == Status_FORWARD)
 		{			
@@ -323,7 +325,7 @@ void customer_control(void)
 	{	//keep Reverse
 		if(motor_status.status == Status_START)	{	
 			motor_status.status = Status_REVERSE;
-			app_u_motor_start(0, reverse_speed,upper_threshold);	
+			undata_speed=	reverse_speed;		
 		}
 		else if(motor_status.status == Status_REVERSE)
 		{			
@@ -345,7 +347,7 @@ void update_settings(MotorSettings_TypeDef *setting)
 unsigned char torque_reach(void)
 {	
 	u8 status = 0; 		// 1- reach_upper  2- reach_lower  0: middle-state
-	threshold_times = 45;//10*90=450ms//0.15*3000=450ms
+	threshold_times = 9;//50*9=450ms//0.15*3000=450ms
 	if ((iq > upper_threshold)||(iq < -(upper_threshold)))
 	{
 		reach_upper_times ++;
@@ -373,7 +375,7 @@ unsigned char toggle_torque_reach(void)
 {	
 	u8 status = 0; 							// 1- reach_upper  2- reach_lower  0: middle-state
 	u8 check_torque = 0;
-	threshold_times =5;//10*5=50ms//0.15*350=50ms;
+	threshold_times =9;//50*9=450ms//0.15*350=50ms;
 	if(((motor_settings.forward_position > - motor_settings.reverse_position)&&(motor_status.status == Status_FORWARD)) || ((motor_settings.forward_position < - motor_settings.reverse_position)&&(motor_status.status == Status_REVERSE)))
 		check_torque = 1;
 	else
@@ -448,8 +450,8 @@ unsigned short int GetRealTorque(void)
 		else torqueValueBuff[num]=tempIq-c_current;
 	}	
 	#ifdef ZHX
-	torqueValueBuff[4]=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;
-	torqueValue=(unsigned short int)(torqueValueBuff[num]*0.07843);
+	torqueValueBuff[4]=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/76;
+	torqueValue=(unsigned short int)(torqueValueBuff[num]*0.0526315);
 	if(torqueValue+2>torqueValueBuff[4]||torqueValue<2+torqueValueBuff[4])
 	{
 		torqueValue=torqueValueBuff[4]; 

@@ -39,7 +39,7 @@ extern SemaphoreHandle_t xSemaphoreApexAutoCalibration;
 	
 #ifdef ZHX
 #define MAX_MOTOR_SPEED   2200//2000(max 2450*6=14700)
-#define MAX_TORQUE_UUPER_THRESHOLD   42//50//42187.71 g.cm=1.841N.cm=18.41mN.m=0.1841N.m)
+#define MAX_TORQUE_UUPER_THRESHOLD   50//42187.71 g.cm=1.841N.cm=18.41mN.m=0.1841N.m)
 #define HALF_MAX_TORQUE_UUPER_THRESHOLD   MAX_TORQUE_UUPER_THRESHOLD/2
 #define MINIMUM_ROTOR_ANGLE          10//minimum routor angle in  " motor_settings.mode=EndoModePositionToggle "
 

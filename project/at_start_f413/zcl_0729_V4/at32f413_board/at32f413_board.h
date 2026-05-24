@@ -71,7 +71,7 @@ extern SemaphoreHandle_t xSemaphorePowerOff;
 extern SemaphoreHandle_t xSemaphoreCaliFinish;
 extern SemaphoreHandle_t xSemaphoreDispRfresh;
 ///****************************/
-#ifndef DEBUG_RTT
+#ifdef DEBUG_RTT
 #define DEBUG_RTT /*use printf*/
 #if 1
 #include "SEGGER_RTT.h"

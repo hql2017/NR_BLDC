@@ -22,7 +22,10 @@ typedef union{
 #define MOTOR_SETTING_UPDATE   6  //配置更新
 #define MOTOR_MODE_RESTART        	7
 #define MOTOR_USART_GC_CONTROL      8//单马达串口根测控制
-#define MOTOR_SETTING_ERR   9  //err
+#define MOTOR_RUN_UPDATE_SPEED      9//
+#define MOTOR_SETTING_ERR   10  //err
+
+
 
 #define m_run_stop         	0
 #define m_run_genara       	1

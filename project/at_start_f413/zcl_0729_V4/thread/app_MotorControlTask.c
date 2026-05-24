@@ -191,6 +191,7 @@ unsigned char head1;
 	float position;
 	unsigned char check_sum;	
 	*/
+extern int undata_speed;
 extern int  forward_speed;
 extern int reverse_speed;
 extern unsigned short upper_threshold;		//iq upper threshold 
@@ -204,12 +205,12 @@ void vAppMotorControlTask( void * pvParameters )
 	BaseType_t m_ctr_tx_sta;
 	unsigned char m_run_sta=0,mStaLen;
 	unsigned char sendKeyMessage=run_button_release_signal;
-
+	static int undata_spd_flag=0;
 	motor_settings.set_cali_index=0;
 	for(;;)	
 	{	
-		vTaskDelay(10);	
-		countMs+=10;	
+		vTaskDelay(50);	
+		countMs+=50;	
 		mStaLen=app_u_motor_rec_data();
 		if(mStaLen!=0)
 		{//正常通讯
@@ -264,6 +265,7 @@ void vAppMotorControlTask( void * pvParameters )
 					}
 					start();
 					break;
+					
 				case MOTOR_SETTING_UPDATE:				
 					if(motor_settings.set_cali_index==0)update_settings(&motor_settings);
 					break;
@@ -296,6 +298,15 @@ void vAppMotorControlTask( void * pvParameters )
 				case MOTOR_SETTING_ERR:
 					stop();
 					break;
+				case MOTOR_RUN_UPDATE_SPEED:
+					if(motor_status.status!=Status_STOP){
+						if(motor_status.mode==EndoModePositionToggle )
+						{
+							app_u_motor_start(2,(int)(u_ctr_rx_msg.msg.fData),upper_threshold);
+						}
+						else app_u_motor_start(0,(int)(u_ctr_rx_msg.msg.fData),upper_threshold);
+					}					 
+					break;
 				default:
 					stop();
 					break;
@@ -303,11 +314,11 @@ void vAppMotorControlTask( void * pvParameters )
 		}
 		else
 		{
-			if(countMs%50==0) app_u_motor_get_sta_req();
+			app_u_motor_get_sta_req();
 		}			
 		if(m_run_sta==m_run_stop)
 		{
-				
+			undata_spd_flag=0;	
 		}	
 		else if(m_run_sta==m_run_genara)
 		{
@@ -321,10 +332,13 @@ void vAppMotorControlTask( void * pvParameters )
 					if(motor_settings.set_cali_index<=MAX_spd_Rpm_num)
 					{
 						DEBUG_PRINTF("cali spd=%d cur=%d\r\n",speed_list[motor_settings.set_cali_index-1],sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]);
-						p_tx_msg.msg.cmdCode=MOTOR_MODE_START;
-						p_tx_msg.msg.cmdLen=0;				
-						forward_speed=speed_list[motor_settings.set_cali_index-1];
-						reverse_speed=-speed_list[motor_settings.set_cali_index-1];
+									
+						forward_speed=-speed_list[motor_settings.set_cali_index-1];
+						reverse_speed=speed_list[motor_settings.set_cali_index-1];
+						undata_speed=forward_speed;
+						p_tx_msg.msg.cmdCode=MOTOR_RUN_UPDATE_SPEED;
+						p_tx_msg.msg.cmdLen=4;
+						p_tx_msg.msg.fData=undata_speed*1.0;
 						upper_threshold=360;
 						motor_status.mode=EndoModeSpeedForward;						
 						m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
@@ -348,7 +362,23 @@ void vAppMotorControlTask( void * pvParameters )
 						m_run_sta=m_run_stop;
 					}	
 				}			
-			}	
+			}
+			else {
+				if(undata_spd_flag!=undata_speed)
+				{
+					undata_spd_flag=undata_speed;
+					p_tx_msg.msg.cmdCode=MOTOR_RUN_UPDATE_SPEED;
+					p_tx_msg.msg.cmdLen=4;
+					p_tx_msg.msg.fData=undata_speed*1.0;	
+					m_ctr_tx_sta=xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+					if(m_ctr_tx_sta!=pdTRUE)		
+					{//resend
+						vTaskDelay(10);
+						xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
+					}	
+				}
+			}
+					
 		}
 		else if(m_run_sta==m_run_cali_angle)
 		{	
@@ -367,8 +397,8 @@ void vAppMotorControlTask( void * pvParameters )
 				vTaskDelay(10);
 				p_tx_msg.msg.cmdCode=MOTOR_MODE_START;
 				p_tx_msg.msg.cmdLen=0;				
-				forward_speed=speed_list[0];
-				reverse_speed=-speed_list[0];
+				forward_speed=-speed_list[0];
+				reverse_speed=speed_list[0];
 				upper_threshold=360;
 				motor_status.mode=EndoModeSpeedForward;
 				vTaskDelay(10);			

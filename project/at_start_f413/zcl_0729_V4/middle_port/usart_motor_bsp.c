@@ -4,6 +4,7 @@
 #include "at32f413_usart.h"
 #include "at32f413_gpio.h"
 #include "at32f413_board.h"
+#include "customer_control.h"
 
 #include "usart_motor_bsp.h"
 #include "FreeRTOS.h"
@@ -206,8 +207,9 @@ void app_u_motor_start(unsigned char s_t_mode, int spd,float torqueI)
   {
     //位置设置  
     u_pos_set.p_set.mode =1;
-    u_pos_set.p_set.position_ref1=150;
-    u_pos_set.p_set.position_ref2=-150;
+    u_pos_set.p_set.position_ref1=motor_settings.forward_position;
+   
+    u_pos_set.p_set.position_ref2=motor_settings.reverse_position;
     u_pos_set.p_set.freq=2;                                  
     app_u_motor_position_set(&u_pos_set);
   }
