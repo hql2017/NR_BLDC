@@ -217,7 +217,7 @@ void vAppMotorControlTask( void * pvParameters )
 			{
 				countMs=0;
 				countS++;											
-				DEBUG_PRINTF("1s iq=%.3fA spd=%.2f T=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque());
+				DEBUG_PRINTF("1s iq=%.3fA spd=%.2f T=%d re=%d\r\n", u_motor_sta_replay.sta.current,u_motor_sta_replay.sta.speed,GetRealTorque(),motor_status.reach_torque);
 			}	
 		}
 		else{
@@ -349,7 +349,6 @@ void vAppMotorControlTask( void * pvParameters )
 					}	
 				}			
 			}	
-			
 		}
 		else if(m_run_sta==m_run_cali_angle)
 		{	

@@ -5,6 +5,7 @@
 #include "gpio_port.h"
 #include "math.h"
 #include "para_list.h"
+#include "at32f413_board.h"
 
 #ifdef DEBUG_RTT
 #include "SEGGER_RTT.h"
@@ -93,8 +94,7 @@ void start()
 void stop(void)
 {	
 	app_u_motor_stop();
-	motor_status.status = Status_STOP;
-	u_motor_sta_replay.sta.current=0;		
+	motor_status.status = Status_STOP;		
 }
 
 /*****************************set torque limit in speed mode*****************************
@@ -105,7 +105,7 @@ void stop(void)
 *****************************************************************************************/
 void set_torque_limit(float upper_limit, float lower_limit)
 {
-	unsigned short temp=(unsigned short)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
+	unsigned short temp=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 	if(lower_limit<0.4)		lower_limit = 0.4;	
 	upper_threshold = upper_limit *130+temp;
 	lower_threshold = lower_limit *130+temp;
@@ -199,7 +199,6 @@ void customer_control(void)
 {
 	static int delay_cnt = 0;	//
 	iq=u_motor_sta_replay.sta.current*1000;//mA
-	
 	if(motor_settings.set_cali_index==0)
 	{//正在校准
 		if(motor_status.mode==EndoModePositionToggle)
@@ -265,6 +264,7 @@ void customer_control(void)
 	}		
 	else if(motor_status.mode == EndoModeSpeedReverse)
 	{	//speed Reverse	
+		
 		if(motor_status.status == Status_START)	{	
 			motor_status.status = Status_REVERSE;
 			app_u_motor_start(0, reverse_speed,upper_threshold);	
@@ -274,7 +274,7 @@ void customer_control(void)
 			if(motor_status.reach_torque == 1)   {															
 				motor_status.status = Status_FORWARD;	
 				app_u_motor_start(0, -reverse_speed,upper_threshold);			
-			}	
+			}				
 		}
 		else if(motor_status.status == Status_FORWARD)
 		{				
@@ -282,6 +282,7 @@ void customer_control(void)
 				motor_status.status = Status_REVERSE;	
 				app_u_motor_start(0, reverse_speed,upper_threshold);					
 			}	
+			
 		}						
 	}	
 	else if(motor_status.mode==EndoModeSpeedForward)
@@ -293,9 +294,9 @@ void customer_control(void)
 		else if(motor_status.status == Status_FORWARD)
 		{			
 			if(motor_status.reach_torque == 1)   {											
-					motor_status.status = Status_REVERSE;	
-					app_u_motor_start(0, -forward_speed,upper_threshold);				
-			}	
+				motor_status.status = Status_REVERSE;	
+				app_u_motor_start(0, -forward_speed,upper_threshold);				
+			}			
 		}
 		else if(motor_status.status == Status_REVERSE)
 		{				
@@ -335,8 +336,8 @@ void customer_control(void)
 void update_settings(MotorSettings_TypeDef *setting)
 {
 	mode_select(setting->mode);	
-	set_speed(setting->forward_speed, setting->reverse_speed);
-	set_position(setting->forward_position, setting->reverse_position);	
+	set_speed(-setting->forward_speed, -setting->reverse_speed);
+	set_position(-setting->forward_position, -setting->reverse_position);	
 	set_torque_limit(setting->upper_threshold, setting->lower_threshold);
 	set_toggle_mode_speed(setting->toggle_mode_speed);		
 }
@@ -398,8 +399,7 @@ unsigned char toggle_torque_reach(void)
 				reach_upper_times = 0;
 				status = 2;
 			}
-		}
-		
+		}		
 	}
 	return status;
 }
