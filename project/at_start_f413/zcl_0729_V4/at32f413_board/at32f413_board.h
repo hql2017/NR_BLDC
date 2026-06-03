@@ -64,9 +64,6 @@ extern QueueHandle_t  xQueueKeyMessage;//key
 extern QueueHandle_t  xQueueBeepMode;//beep
 extern QueueHandle_t  xQueueBatValue;//batValue
 extern QueueHandle_t  xQueueMotorControlMessage;
-
-
-	
 extern SemaphoreHandle_t xSemaphorePowerOff;
 extern SemaphoreHandle_t xSemaphoreCaliFinish;
 extern SemaphoreHandle_t xSemaphoreDispRfresh;

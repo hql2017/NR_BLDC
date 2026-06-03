@@ -110,8 +110,8 @@ void set_torque_limit(float upper_limit, float lower_limit)
 {
 	unsigned short temp=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 	if(lower_limit<0.4)		lower_limit = 0.4;	
-	upper_threshold = upper_limit *190+temp;
-	lower_threshold = lower_limit *190+temp;
+	upper_threshold = upper_limit *160+temp;
+	lower_threshold = lower_limit *160+temp;
 }
 void set_toggle_mode_speed(int speed)
 {
@@ -455,7 +455,7 @@ unsigned short int GetRealTorque(void)
 		else {
 			targetSpd=speed_list[motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].toggleSpeedNum];
 		}
-		if(tempSpd+20>targetSpd&&tempSpd<20+targetSpd)
+		//if(tempSpd+20>targetSpd&&tempSpd<20+targetSpd)
 		{	//fresh
 			c_current=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
 			tempIq=(unsigned short int)(fabsf(iq));
@@ -465,7 +465,7 @@ unsigned short int GetRealTorque(void)
 	}		
 	#ifdef ZHX
 	//分段计算0~2.0 2.0 ~3.0 3.0 ~4.0 4.0~5.0
-	kalmTemp=(terqueCurrentTemp)/19;
+	kalmTemp=(terqueCurrentTemp)/16;
 	torqueValue=(uint16_t) kalman_filter_update(&kalmMotorTorque,kalmTemp*1.0); 	
 	#else
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//10/(130*4);

@@ -75,19 +75,10 @@ SemaphoreHandle_t xSemaphoreCaliFinish;
 #ifdef  APEX_FUNCTION_EBABLE
 SemaphoreHandle_t xSemaphoreApexAutoCalibration;
 #endif
-	
-
-	
+		
 #if configUSE_TIMERS
 TimerHandle_t xTimer01;
 #endif
-
-#ifdef  APEX_FUNCTION_EBABLE
-#define MIN_GC_PWM_VALID_TIME  40//Minimum switching time Ms(40Hz>30  8000>20)
-#define GC_ADC_DELAY_TIME  3//�ɼ��ӳ�
-
-uint16_t   apex_ValueBuff[8]={0};  //����ο�ֵ
-
 // 初始化滤波器
 void kalman_filter_init(KalmanFilter* kf, double initial_estimate, double variance) {
     kf->last_estimate = initial_estimate;
@@ -109,6 +100,13 @@ double kalman_filter_update(KalmanFilter* kf, double measurement) {
     kf->last_estimate = kf->estimate;
     return kf->estimate;
 }
+#ifdef  APEX_FUNCTION_EBABLE
+#define MIN_GC_PWM_VALID_TIME  40//Minimum switching time Ms(40Hz>30  8000>20)
+#define GC_ADC_DELAY_TIME  3//�ɼ��ӳ�
+
+uint16_t   apex_ValueBuff[8]={0};  //����ο�ֵ
+
+
 /**
   * @brief 	GC_PWM_SwitchTimeManage
   * @param  systemTime

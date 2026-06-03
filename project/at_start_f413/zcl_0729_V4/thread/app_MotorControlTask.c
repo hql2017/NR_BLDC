@@ -379,8 +379,7 @@ void vAppMotorControlTask( void * pvParameters )
 						xQueueSend(xQueueMotorControlMessage, p_tx_msg.mBuff, 0);
 					}	
 				}
-			}
-					
+			}					
 		}
 		else if(m_run_sta==m_run_cali_angle)
 		{	

@@ -1133,7 +1133,9 @@ static  void SubmenuPageHandle(unsigned short int subPageID,unsigned short int s
 				else
 				{					//wait idle tiem
 					signal =MENU_HOME_PAGE;//exit
-					xQueueSend(xQueueMenuValue, &signal, 0);
+					xQueueSend(xQueueMenuValue, &signal, 0);						
+					vTaskDelay(MAX_WDT_FEED_TIME_MS);//wait wdt dog reset
+					xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);
 					//start motor run
 					sendKeyMessage=run_button_press_signal;		
 					xQueueSend(xQueueKeyMessage, &sendKeyMessage, 0);	                				

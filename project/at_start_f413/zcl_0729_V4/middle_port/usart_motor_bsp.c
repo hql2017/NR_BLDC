@@ -18,7 +18,7 @@ uint8_t uart_motor_tx_buf[MAX_U_MOTOR_FIFO_LEN+1];
 uint8_t uart_motor_rx_buf[MAX_U_MOTOR_FIFO_LEN+1];
 static unsigned char receiveLen=0;
 
-static float spd_avg_buff[8];
+static float spd_avg_buff[16];
 static KalmanFilter kalmRecCurr;
 
 uint8_t TX_CheckSum(uint8_t *buf, uint8_t len) ;//bufΪ���飬lenΪ���鳤��
@@ -110,7 +110,6 @@ void app_uart_motor_init(void)
 	//DMA
 	config_u_motor_uart3_dma();	
 
-
 	kalman_filter_init(&kalmRecCurr, 0, 0.1);
 }
 
@@ -124,7 +123,7 @@ float avege_value(float *dataBuff,unsigned char len )
   for(i=0;i<len;i++){
 		sum+=dataBuff[i];
 	}
-	retVale=sum*0.125;//8;
+	retVale=sum/16;//8;
 	return retVale;
 }
 /**
@@ -277,13 +276,14 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
 		if((data[3]&0x01)!=0)
 		{     
       //  SEGGER_RTT_WriteString(0, "sta r\r\n");	
-			memcpy(u_motor_sta_replay.data,data,sizeof(get_status_reply_struct));	
-			tempF=(float) kalman_filter_update(&kalmRecCurr, u_motor_sta_replay.sta.current); 	      
-			u_motor_sta_replay.sta.current=tempF;
-			rec_idx%=8;
+			memcpy(u_motor_sta_replay.data,data,sizeof(get_status_reply_struct));
+      tempF=(float) kalman_filter_update(&kalmRecCurr, u_motor_sta_replay.sta.current); //fresh filter
+      if( kalmRecCurr.last_estimate<u_motor_sta_replay.sta.current*1.2f&&kalmRecCurr.last_estimate>u_motor_sta_replay.sta.current*0.8f){
+        u_motor_sta_replay.sta.current=tempF;        
+      }	   
+			rec_idx%=16;
 			spd_avg_buff[rec_idx]=u_motor_sta_replay.sta.speed;
-			u_motor_sta_replay.sta.speed= avege_value(spd_avg_buff,8);
-			u_motor_sta_replay.sta.speed=spd_avg_buff[rec_idx];
+			u_motor_sta_replay.sta.speed= avege_value(spd_avg_buff,16);			
 			rec_idx++;
 		}			
 	}	
