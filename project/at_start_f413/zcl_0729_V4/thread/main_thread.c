@@ -87,6 +87,28 @@ TimerHandle_t xTimer01;
 #define GC_ADC_DELAY_TIME  3//�ɼ��ӳ�
 
 uint16_t   apex_ValueBuff[8]={0};  //����ο�ֵ
+
+// 初始化滤波器
+void kalman_filter_init(KalmanFilter* kf, double initial_estimate, double variance) {
+    kf->last_estimate = initial_estimate;
+    kf->estimate = initial_estimate;
+    kf->variance = variance;
+    kf->kalman_gain = 0.0;
+    kf->error_estimate = 1.0;
+} 
+
+// 更新滤波器状态
+double kalman_filter_update(KalmanFilter* kf, double measurement) {
+    // 计算卡尔曼增益
+    kf->kalman_gain = kf->error_estimate / (kf->error_estimate + kf->variance);
+    // 更新误差估计值
+    kf->error_estimate = (1 - kf->kalman_gain) * kf->error_estimate + kf->kalman_gain * (measurement - kf->last_estimate);
+    // 更新估计值
+    kf->estimate = kf->last_estimate + kf->kalman_gain * (measurement - kf->last_estimate);
+    // 更新上次估计值
+    kf->last_estimate = kf->estimate;
+    return kf->estimate;
+}
 /**
   * @brief 	GC_PWM_SwitchTimeManage
   * @param  systemTime

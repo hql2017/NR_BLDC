@@ -195,6 +195,7 @@ extern int undata_speed;
 extern int  forward_speed;
 extern int reverse_speed;
 extern unsigned short upper_threshold;		//iq upper threshold 
+ KalmanFilter kalmMotorTorque;
 void vAppMotorControlTask( void * pvParameters )
 {	
 	unsigned int countMs,countS,cali_start_s;
@@ -207,6 +208,7 @@ void vAppMotorControlTask( void * pvParameters )
 	unsigned char sendKeyMessage=run_button_release_signal;
 	static int undata_spd_flag=0;
 	motor_settings.set_cali_index=0;
+	kalman_filter_init(&kalmMotorTorque, 0, 0.1);
 	for(;;)	
 	{	
 		vTaskDelay(50);	

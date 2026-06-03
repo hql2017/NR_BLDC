@@ -35,6 +35,7 @@ MotorStatus_TypeDef motor_status;
 MotorSettings_TypeDef motor_settings;
 //变量
 static float iq;
+
 #define m_gear_ratio	6		//gearbox ratio, set to 1 if no gearbox is used.
 
 unsigned char torque_reach(void);
@@ -199,7 +200,8 @@ uint16_t get_position_angle(void)
 
 void customer_control(void)
 {
-	static int delay_cnt = 0;	//
+	
+	static int delay_cnt = 0;	//	
 	iq=u_motor_sta_replay.sta.current*1000;//mA
 	if(motor_settings.set_cali_index==0)
 	{//正在校准
@@ -407,6 +409,7 @@ unsigned char toggle_torque_reach(void)
 }
 void init_registers()
 {
+
 	iq=u_motor_sta_replay.sta.current*1000;//mA
 }
 
@@ -428,38 +431,45 @@ void MotorDeviceReset(void)
 unsigned short int GetRealTorque(void)
 {
 	unsigned  int retValue;
-  	unsigned int torqueValue;
+  unsigned int torqueValue;
 	unsigned short int tempIq;
-	static 	unsigned short int torqueValueBuff[5]={0};//4滤波值
-	static unsigned char num;
-	unsigned char tIndex;
+	static unsigned short int terqueCurrentTemp=0;
+	unsigned short int kalmTemp;
 	unsigned short int c_current;	
-	num%=4;
+	 short int tempSpd,targetSpd;
 	if(motor_settings.set_cali_index!=0)
 	{
+		
 		sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=(unsigned short int)fabs(u_motor_sta_replay.sta.current*1000);//mA
 		if(sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]<10) sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=10;
-		if(sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]>250) sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=250;
-		
-		torqueValueBuff[num]=1;
+		if(sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]>250) sys_param_un.device_param.m_noload_curretnRef[motor_settings.set_cali_index-1]=250;		
+		terqueCurrentTemp=1;
 	}
 	else {
-		c_current=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
-		tempIq=(unsigned short int)(fabsf(iq));
-		if(tempIq<c_current) torqueValueBuff[num]=0;
-		else torqueValueBuff[num]=tempIq-c_current;
-	}	
+		tempSpd=(short int)fabsf((u_motor_sta_replay.sta.speed));
+		if(motor_status.mode!=EndoModePositionToggle)
+		{
+			targetSpd=speed_list[motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum];
+			
+		}
+		else {
+			targetSpd=speed_list[motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].toggleSpeedNum];
+		}
+		if(tempSpd+20>targetSpd&&tempSpd<20+targetSpd)
+		{	//fresh
+			c_current=(unsigned short int)noload_current(motor_param_un.system_motor_pattern[sys_param_un.device_param.use_p_num].motorSpeedNum);
+			tempIq=(unsigned short int)(fabsf(iq));
+			if(tempIq<c_current) terqueCurrentTemp=0;
+			else terqueCurrentTemp=tempIq-c_current;
+		}		
+	}		
 	#ifdef ZHX
-	torqueValueBuff[4]=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/76;
-	torqueValue=(unsigned short int)(torqueValueBuff[num]*0.0526315);
-	if(torqueValue+2>torqueValueBuff[4]||torqueValue<2+torqueValueBuff[4])
-	{
-		torqueValue=torqueValueBuff[4]; 
-	}
+	//分段计算0~2.0 2.0 ~3.0 3.0 ~4.0 4.0~5.0
+	kalmTemp=(terqueCurrentTemp)/19;
+	torqueValue=(uint16_t) kalman_filter_update(&kalmMotorTorque,kalmTemp*1.0); 	
 	#else
 	torqueValue=(torqueValueBuff[0]+torqueValueBuff[1]+torqueValueBuff[2]+torqueValueBuff[3])/51;//10/(130*4);
 	#endif
-	num++;	
 	retValue=torqueValue;	
 	return retValue;
 }

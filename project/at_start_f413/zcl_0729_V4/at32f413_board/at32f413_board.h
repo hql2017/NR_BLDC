@@ -268,6 +268,18 @@ extern SemaphoreHandle_t xSemaphoreDispRfresh;
   * @{
   */
 /******************** functions ********************/
+// 定义卡尔曼滤波器结构
+typedef struct {
+    double last_estimate; // 上次估计值
+    double estimate; // 当前估计值
+    double variance; // 估计噪声方差
+    double kalman_gain; // 卡尔曼增益
+    double error_estimate; // 误差估计值
+} KalmanFilter;
+extern KalmanFilter kalmMotorTorque;
+extern void kalman_filter_init(KalmanFilter* kf, double initial_estimate, double variance);   
+// 更新滤波器状态
+extern double kalman_filter_update(KalmanFilter* kf, double measurement) ;
 
 /* delay function */
 void delay_init(unsigned int tickFrequency);

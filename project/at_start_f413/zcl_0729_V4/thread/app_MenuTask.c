@@ -3601,6 +3601,6 @@ void vAppMenuManageTask( void * pvParameters )
 		#ifdef WDT_ENABLE
 		xEventGroupSetBits(WDTEventGroup,MENU_TASK_EVENT_BIT);
 		#endif
-		 vTaskDelay(2);//1ms
+		 vTaskDelay(20);//1ms
 	}
 }

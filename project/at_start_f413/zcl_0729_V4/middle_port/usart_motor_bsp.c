@@ -17,6 +17,10 @@
 uint8_t uart_motor_tx_buf[MAX_U_MOTOR_FIFO_LEN+1];
 uint8_t uart_motor_rx_buf[MAX_U_MOTOR_FIFO_LEN+1];
 static unsigned char receiveLen=0;
+
+static float spd_avg_buff[8];
+static KalmanFilter kalmRecCurr;
+
 uint8_t TX_CheckSum(uint8_t *buf, uint8_t len) ;//bufΪ���飬lenΪ���鳤��
 
 
@@ -104,9 +108,25 @@ void app_uart_motor_init(void)
 
 	usart_enable(USART3, TRUE);	  
 	//DMA
-	config_u_motor_uart3_dma();		
+	config_u_motor_uart3_dma();	
+
+
+	kalman_filter_init(&kalmRecCurr, 0, 0.1);
 }
 
+
+//均值
+float avege_value(float *dataBuff,unsigned char len )
+{	
+	unsigned char i;
+	float retVale;
+	double sum=0.0;
+  for(i=0;i<len;i++){
+		sum+=dataBuff[i];
+	}
+	retVale=sum*0.125;//8;
+	return retVale;
+}
 /**
   * @brief  usart3_send_data
   * @param  u8 *buf, u16 len
@@ -239,6 +259,8 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
 {				
 	unsigned char codeId,dataLen=0;
   unsigned char i=0;
+	static unsigned char rec_idx=0;
+	float tempF;
   if(data[2]>5)  dataLen=data[2]-5;
 	codeId=data[3]&U_MOTOR_CODE_ID_MASK;
   
@@ -254,9 +276,15 @@ void app_u_motor_handle(unsigned char *data,unsigned char packLen )
     #endif		
 		if((data[3]&0x01)!=0)
 		{     
-      //  SEGGER_RTT_WriteString(0, "sta r\r\n");
-			memcpy(u_motor_sta_replay.data,data,sizeof(get_status_reply_struct));	      
-
+      //  SEGGER_RTT_WriteString(0, "sta r\r\n");	
+			memcpy(u_motor_sta_replay.data,data,sizeof(get_status_reply_struct));	
+			tempF=(float) kalman_filter_update(&kalmRecCurr, u_motor_sta_replay.sta.current); 	      
+			u_motor_sta_replay.sta.current=tempF;
+			rec_idx%=8;
+			spd_avg_buff[rec_idx]=u_motor_sta_replay.sta.speed;
+			u_motor_sta_replay.sta.speed= avege_value(spd_avg_buff,8);
+			u_motor_sta_replay.sta.speed=spd_avg_buff[rec_idx];
+			rec_idx++;
 		}			
 	}	
   else if(codeId==U_MOTOR_ID_SPEED_MODE)
